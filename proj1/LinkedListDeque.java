@@ -45,5 +45,39 @@ public class LinkedListDeque<GenericThing>
         size++;
     }
 
+    public boolean isEmpty()
+    {
+        return(size == 0);
+    }
 
+    public int size()
+    {
+        return size;
+    }
+
+    public void printDeque()
+    {
+        Node tracker = this;
+        for(int i = size; i>1; i--)
+        {
+            System.out.print(tracker.item.toString() + " ");
+            tracker = tracker.next;
+        }
+        System.out.print(tracker.item.toString());
+    }
+
+    public GenericThing removeFirst()
+    {
+        if(isEmpty())
+        {
+            return;
+        }
+        else
+        {
+            r = sentinel.next;
+            sentinel.next = sentinel.next.next;
+            return r;
+        }
+    }
+    
 }
