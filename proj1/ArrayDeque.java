@@ -124,16 +124,13 @@ public class ArrayDeque<Item>
         }
         else
         {
-            Node r = sentinel.next;//to be deleted
+            Item r = items[front];//to be deleted
 
-            sentinel.next = sentinel.next.next;//removes sentinel references to r
-            sentinel.next.previous = sentinel;
-
-            r.previous = null;//isolates r
-            r.next = null;
+            items[front] = null;
+            moveFront(1);
 
             size--;
-            return r.item;
+            return r;
 
         }
     }
@@ -146,15 +143,11 @@ public class ArrayDeque<Item>
         }
         else
         {
-            Node r = last;
-            last = r.previous;
-            r.previous = null;
-            r.next = null;
-            last.previous.next = sentinel;
-            sentinel.previous = last;
+            Item r = items[last];//to be deleted
+            items[last] = null;
+            moveLast(-1);
             size--;
-            return r.item;
-
+            return r;
         }
     }
 
@@ -166,13 +159,7 @@ public class ArrayDeque<Item>
         }
         else
         {
-            Node g = sentinel.next;
-            while(index>0)
-            {
-                g = g.next;
-                index--;
-            }
-            return g.item;
+            return items[index + front];
         }
     }
 }
