@@ -82,7 +82,7 @@ public class ArrayDeque<Item>
     	{
     		moveLast(1);
     	}
-    	items[front] = thing;
+    	items[last] = thing;
         size++;
     }
 
@@ -98,18 +98,22 @@ public class ArrayDeque<Item>
 
     public void printDeque()
     {
-        Node tracker = sentinel.next;
         if(size == 0)
         {
             return;
         }
 
-        for(int i = 0; i < size-1; i++)
+        for(int i = front; i < items.length; i++)
         {
-            System.out.print(tracker.item.toString() + " ");
-            tracker = tracker.next;
+            System.out.print(items[i].toString() + " ");
         }
-        System.out.print(tracker.item.toString() + "\n");
+
+        for(int i = 0; i < last; i++)
+        {
+            System.out.print(items[i].toString() + " ");
+        }
+
+        System.out.print(items[last].toString() + "\n");
     }
 
     public Item removeFirst()
