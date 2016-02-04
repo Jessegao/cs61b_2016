@@ -16,7 +16,8 @@ public class ArrayDeque<Item>
 
     private void resize() {
     	Item[] a = (Item[]) new Object[size*RFACTOR];
-    	System.arraycopy(items, 0, a, front, items.length);
+    	System.arraycopy(items, front, a, 0, items.length-front);
+    	System.arraycopy(items, items.length-front, a, front, items.length);
     	items = a;    	
     }
 
