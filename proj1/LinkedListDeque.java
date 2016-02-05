@@ -14,6 +14,7 @@ public class LinkedListDeque<Item>{
     private Node sentinel; /* this is Hug's instance vars also */
     private int size;
     private Node last;
+    //IMPORTANT! last.next is sentinel
     //sentinel.next is always front
 
     public LinkedListDeque(){
@@ -27,7 +28,6 @@ public class LinkedListDeque<Item>{
     public void addFirst(Item thing){
         Node oldNode = sentinel.next;
         //last needs to account for first add
-        boolean empty = isEmpty();
         //set the proper pointers for the new node
         sentinel.next = new Node(sentinel, thing, oldNode);
         //set pointer for oldnode
@@ -82,21 +82,31 @@ public class LinkedListDeque<Item>{
             r.next = null;
 
             size--;
+            //for the case where the only element in a set is removed and last becomes sentinel
+            if(isEmpty()){
+                last = sentinel;
+            }
+            
             return r.item;
         }
     }
 
     public Item removeLast(){
+
+        //needs to remove the reference to last by storing last
+        //then removing the reference to it in the second to last item and the sentinel
+        //there is also a sentinel node between last and first(which is sentinel.next)
         if(isEmpty()){
             return null;
         }
         else{
             Node r = last;
-            last = r.previous;
-            r.previous = null;
-            r.next = null;
-            last.previous.next = sentinel;
+            last = last.previous;
             sentinel.previous = last;
+
+            r.previous = null;//isolates r
+            r.next = null;
+
             size--;
             return r.item;
         }

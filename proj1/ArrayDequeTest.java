@@ -1,88 +1,52 @@
+import org.junit.Test;
+import static org.junit.Assert.*;
 public class ArrayDequeTest{
-
-	/* Utility method for printing out empty checks. */
-	public static boolean checkEmpty(boolean expected, boolean actual) {
-		if (expected != actual) {
-			System.out.println("isEmpty() returned " + actual + ", but expected: " + expected);
-			return false;
+	@Test
+	public void testAddFirst(){
+		ArrayDeque<Integer> ints = new ArrayDeque<Integer>();
+		for(int i = 16; i >=0; i--)
+		{
+			ints.addFirst(i);//sees if it resizes
 		}
-		return true;
+		System.out.println("the size is " + ints.size() + "\n");
+		int g = ints.get(0);
+		int g2 = ints.get(7);
+		int g3 = ints.get(15);
+		ints.printDeque();
+		assertEquals(9,g);
+		assertEquals(1,g2);
 	}
-
-	/* Utility method for printing out empty checks. */
-	public static boolean checkSize(int expected, int actual) {
-		if (expected != actual) {
-			System.out.println("size() returned " + actual + ", but expected: " + expected);
-			return false;
+	
+	@Test
+	public void testAddLast(){
+		ArrayDeque<Integer> ints = new ArrayDeque<Integer>();
+		for(int i = 0; i < 20; i++)
+		{
+			ints.addLast(i);//sees if it resizes
 		}
-		return true;
+		System.out.println("the size is " + ints.size() + "\n");
+		int g = ints.get(0);
+		int g2 = ints.get(7);
+		int g3 = ints.get(15);
+		ints.printDeque();
+		assertEquals(0,g);
+		assertEquals(7,g2);
+		assertEquals(15,g3);
 	}
 
-	/* Prints a nice message based on whether a test passed. 
-	 * The \n means newline. */
-	public static void printTestStatus(boolean passed) {
-		if (passed) {
-			System.out.println("Test passed!\n");
-		} else {
-			System.out.println("Test failed!\n");
-		}
-	}
-
-	/** Adds a few things to the list, checking isEmpty() and size() are correct, 
-	  * finally printing the results. 
-	  *
-	  * && is the "and" operation. */
-	public static void addIsEmptySizeTest() {
-		System.out.println("Running add/isEmpty/Size test.");
-
-		LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
-
-		boolean passed = checkEmpty(true, lld1.isEmpty());
-
-		lld1.addFirst("front");
-		passed = checkSize(1, lld1.size()) && passed;
-		passed = checkEmpty(false, lld1.isEmpty()) && passed;
-
-		lld1.addLast("middle");
-		passed = checkSize(2, lld1.size()) && passed;
-
-		lld1.addLast("back");
-		passed = checkSize(3, lld1.size()) && passed;
-
-		System.out.println("Printing out deque: ");
-		lld1.printDeque();
-
-		printTestStatus(passed);
-
-	}
-
-	/** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
-	public static void addRemoveTest() {
-
-		System.out.println("Running add/remove test.");
-		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
-		// should be empty 
-		boolean passed = checkEmpty(true, lld1.isEmpty());
-		System.out.println("Printing out deque (should not print anything): ");
-		lld1.printDeque();
-
-		lld1.addFirst(10);
-		// should not be empty 
-		passed = checkEmpty(false, lld1.isEmpty()) && passed;
-		System.out.println("Printing out deque (should print 10): ");
-		lld1.printDeque();
-
-		lld1.removeFirst();
-		// should be empty 
-		passed = checkEmpty(true, lld1.isEmpty()) && passed;
-
-		printTestStatus(passed);
+	@Test 
+	public void testRemoves(){
+		ArrayDeque<Integer> ints = new ArrayDeque<Integer>();
+		ints.addFirst(1);
+		int r = ints.removeFirst();
+		assertEquals(1, r);
+		ints.addLast(9);
+		int r2 = ints.removeLast();
+		assertEquals(9, r2);
 
 	}
 
 	public static void main(String[] args) {
-		System.out.println("Running tests.\n");
-		addIsEmptySizeTest();
-		addRemoveTest();
+		jh61b.junit.TestRunner.runTests("all", ArrayDequeTest.class);
 	}
 }

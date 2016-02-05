@@ -6,7 +6,7 @@ public class ArrayDeque<Item>{
 
 	private static int RFACTOR = 2;
 
-	 public ArrayDeque() {
+	public ArrayDeque() {
     	size = 0;
     	front = 0;
     	last = 0;
@@ -14,11 +14,17 @@ public class ArrayDeque<Item>{
     }
 
     private void resize() {
-    	Item[] a = (Item[]) new Object[size*RFACTOR];
+    	Item[] a = (Item[]) new Object[items.length*RFACTOR];
+/*
     	System.arraycopy(items, front, a, 0, items.length-front);
-    	System.arraycopy(items, 0, a, items.length-front, front+1);
+    	System.arraycopy(items, 0, a, items.length-front, front);
+    	*/
+    	for(int i = 0; i < size; i++){
+    			a[i] = items[front];
+    			moveFront(1);
+    		}
+
     	items = a;
-    	front = 0;
     	last = size-1;
     }
 
@@ -26,7 +32,9 @@ public class ArrayDeque<Item>{
     	if(size == items.length){
     		resize();
     	}
-    	moveFront(-1);
+    	if(items[front] != null){
+    		moveFront(-1);
+    	}
     	items[front] = thing;
         size++;
     }
@@ -100,10 +108,15 @@ public class ArrayDeque<Item>{
     private void downsize(){
     	if(size*4<items.length && items.length>=16){
     		Item[] a = (Item[]) new Object[size*RFACTOR];
-    		System.arraycopy(items, front, a, 0, items.length-front);
-    		System.arraycopy(items, 0, a, items.length-front, front+1);
+    		/*
+    		System.arraycopy(items, front, a, 0, items.length-front); // copies items from front to the end of the array
+    		System.arraycopy(items, 0, a, items.length-front, last+1);
+    		items = a;*/
+    		for(int i = 0; i < size; i++){
+    			a[i] = items[front];
+    			moveFront(1);
+    		}
     		items = a;
-    		front = 0;
     		last = size-1;
     	}
     }
@@ -116,9 +129,11 @@ public class ArrayDeque<Item>{
             Item r = items[front];//to be deleted
 
             items[front] = null;
-            moveFront(1);
-
             size--;
+
+            if(front != last)
+            	{moveFront(1);}
+
             downsize();
             return r;
         }
@@ -130,20 +145,25 @@ public class ArrayDeque<Item>{
         }
         else{
             Item r = items[last];//to be deleted
+            
             items[last] = null;
-            moveLast(-1);
             size--;
+
+            if(last != front){
+            	moveLast(-1);
+            }
+
             downsize();
             return r;
         }
     }
 
     public Item get(int index){
-        if(index>size || index < 0){
+        if(index>=size || index < 0){
             return null;
         }
         else{
-            return items[index + front];
+            return items[(index + front)%(items.length-1)];
         }
     }
 }
