@@ -43,7 +43,12 @@ public class ArrayDequeTest{
 		ints.addLast(9);
 		int r2 = ints.removeLast();
 		assertEquals(9, r2);
-
+		ints.addLast(0);
+		ints.addFirst(1);
+		int g = ints.get(0);
+		assertEquals(1, g);
+		g = ints.get(1);
+		assertEquals(0, g);
 	}
 
 	public static void main(String[] args) {

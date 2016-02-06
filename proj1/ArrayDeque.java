@@ -15,7 +15,7 @@ public class ArrayDeque<Item>{
 
     private void resize() {
     	Item[] a = (Item[]) new Object[items.length*RFACTOR];
-/*
+		/*
     	System.arraycopy(items, front, a, 0, items.length-front);
     	System.arraycopy(items, 0, a, items.length-front, front);
     	*/
@@ -23,7 +23,7 @@ public class ArrayDeque<Item>{
     			a[i] = items[front];
     			moveFront(1);
     		}
-
+    	front = 0;
     	items = a;
     	last = size-1;
     }
@@ -116,6 +116,7 @@ public class ArrayDeque<Item>{
     			a[i] = items[front];
     			moveFront(1);
     		}
+    		front = 0;
     		items = a;
     		last = size-1;
     	}
@@ -145,7 +146,7 @@ public class ArrayDeque<Item>{
         }
         else{
             Item r = items[last];//to be deleted
-            
+
             items[last] = null;
             size--;
 
@@ -163,7 +164,7 @@ public class ArrayDeque<Item>{
             return null;
         }
         else{
-            return items[(index + front)%(items.length-1)];
+            return items[(index + front)%(items.length)];
         }
     }
 }
