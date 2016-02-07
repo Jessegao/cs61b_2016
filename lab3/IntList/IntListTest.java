@@ -27,6 +27,15 @@ public class IntListTest {
         assertEquals(IntList.list(1, 4, 9), L);
     }
 
+    @Test
+    public void testReverse(){
+        IntList L = new IntList();
+        assertEquals(new IntList(), L.reverse());
+        L = IntList.list(1, 2, 3);
+        assertEquals(IntList.list(3, 2, 1), L.reverse());
+        assertEquals(IntList.list(3, 2, 1), L);
+    }
+
     /**
      * Do not use the new keyword in your tests. You can create
      * lists using the handy IntList.list method.
@@ -69,5 +78,7 @@ public class IntListTest {
     /** If you're running this from the command line, you'll need
       * to add a main method. See ArithmeticTest.java for an
       * example. */
-
+    public static void main(String... args) {
+        jh61b.junit.TestRunner.runTests("all", IntListTest.class);
+    }
 }

@@ -237,5 +237,21 @@ public class IntList {
         out.format(")");
         return out.toString();
     }
+
+    public IntList reverse(){
+        IntList tracker = tail;
+        IntList tracker2 = this;
+        tail = null;
+        while(tracker != null){
+            IntList storage = tracker2;
+            tracker2 = tracker;
+            tracker = tracker.tail;
+            tracker2.tail = storage;
+        }
+        //messy implementation lol
+        return this;
+
+
+    }
 }
 
