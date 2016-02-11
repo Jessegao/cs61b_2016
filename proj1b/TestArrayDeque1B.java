@@ -2,29 +2,78 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestArrayDeque1B{
-	@Test
-	public void testAddRemoveFront(){
-		System.out.println("Testing for adding to the front will begin");
-		StudentArrayDeque<Integer> ints = new StudentArrayDeque();
-		for(i = 0, i<32, i++){
-			ints.addFront(i);
-		}
-		assertEquals(ints.size() == 32);
-	}
 
 	@Test
-	public void testGet(){
-		System.out.println("Testing for the get method will begin. If this test fails, disregard all bottom cases");
-		StudentArrayDeque<Integer> ints = new StudentArrayDeque();
-		for(i = 0, i<32, i++){
-			ints.addLast(i);
-			int g = ints.get(i);
-			assertEquals(i, g);
+	public void testRandom(){
+		Integer repeat = 500;
+		Integer random;
+
+		StudentArrayDeque<Integer> ints = new StudentArrayDeque<Integer>();
+		ArrayDequeSolution<Integer> realInts = new ArrayDequeSolution<Integer>();
+		FailureSequence sequence = new FailureSequence();
+		for(Integer i = 0; i<repeat; i++){
+			random = StdRandom.uniform(100);
+			if(ints.isEmpty()){
+
+				boolean solution = realInts.isEmpty();
+				boolean student = ints.isEmpty();
+				assertEquals(sequence.toString(), solution, student);
+			}
+			if(random > 75){
+				ints.addFirst(random);
+				realInts.addFirst(random);
+				sequence.addOperation(new DequeOperation("addFirst", random));
+
+				Integer solution = realInts.get(0);
+				Integer student = ints.get(0);
+				assertEquals(sequence.toString(), solution, student);
+
+				int s = realInts.size();
+				int s2 = ints.size();
+				sequence.addOperation(new DequeOperation("size"));
+				assertEquals(sequence.toString(), s, s2);
+			}
+			else if(random > 50 && random <= 75){
+				ints.addLast(random);
+				realInts.addLast(random);
+				sequence.addOperation(new DequeOperation("addLast", random));
+
+				Integer solution = realInts.get(realInts.size()-1);
+				Integer student = ints.get(ints.size()-1);
+				assertEquals(sequence.toString(), solution, student);
+
+				int s = realInts.size();
+				int s2 = ints.size();
+				sequence.addOperation(new DequeOperation("size"));
+				assertEquals(sequence.toString(), s, s2);
+			}
+			else if(random > 25 && random <= 50){
+
+				Integer solution = realInts.removeFirst();
+				Integer student = ints.removeFirst();
+				sequence.addOperation(new DequeOperation("removeFirst"));
+				assertEquals(sequence.toString(), solution, student);
+
+				int s = realInts.size();
+				int s2 = ints.size();
+				sequence.addOperation(new DequeOperation("size"));
+				assertEquals(sequence.toString(), s, s2);
+			}
+			else{
+				Integer solution = realInts.removeLast();
+				Integer student = ints.removeLast();
+				sequence.addOperation(new DequeOperation("removeLast"));
+				assertEquals(sequence.toString(), solution, student);
+
+				int s = realInts.size();
+				int s2 = ints.size();
+				sequence.addOperation(new DequeOperation("size"));
+				assertEquals(sequence.toString(), s, s2);
+			}
+
 		}
 	}
-	@Test
-	public void randomAddRemove(){
-		System.out.println("Testing add and removing randomly with 500 calls");
-		StudentArrayDeque<Integer> ints = new StudentArrayDeque();
+	public static void main(String[] args){
+		jh61b.junit.TestRunner.runTests(TestArrayDeque1B.class);
 	}
 }

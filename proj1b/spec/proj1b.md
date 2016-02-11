@@ -78,12 +78,23 @@ Tips
 
 - Start with ArrayDeque. A bug will be easier to find.
 
+<<<<<<< HEAD
 - assertEquals will not work the way you'd hope with Deques. For example assertEquals(deque1, deque2) will not return true if all the items are the same. You'll need to write your own comparison method if you want to compare entire decks.
+=======
+- assertEquals will not work the way you'd hope with Deques. For example assertEquals(deque1, deque2) will not return true if all the items are the same. You'll need to write your own comparison method if you want to compare entire deques.
+
+- *It's probably not a good idea to write a Deque comparison function*. Suppose you write a `compareDeques(studentDeque, solutionDeque)` method that returns false. Even if this function returns false, that doesn't give you an operation that causes a failure. It's much easier to test the output of single operations (e.g. student.removeFirst() vs. solution.removeFirst()).
+>>>>>>> c21bbf1eebcb67e01aa47aefb5607482a133709b
 
 - The StdRandom class is the easiest way to generate random numbers. See [the official documentation](http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdRandom.html) for a list of methods.
 
 - There's no need to do any exception catching or throwing on this assignment (we haven't learned this in 61B yet). 
 
+<<<<<<< HEAD
+=======
+- Build your failure sequence as you perform operations. 
+
+>>>>>>> c21bbf1eebcb67e01aa47aefb5607482a133709b
 Frequently Asked Questions
 ----------------
 
@@ -97,4 +108,16 @@ Well, that's embarassing. Rather than fix this, we'll leave this bug in to encou
 
 #### How would I write a test for printDeque()?
 
+<<<<<<< HEAD
 It would be rather involved, and our autograder autograder isn't quite smart enough to be able to read your output anyway. Stick with the other methods. If you're curious, google "redirect standard output".
+=======
+It would be rather involved, and our autograder autograder isn't quite smart enough to be able to read your output anyway. Stick with the other methods. If you're curious, google "redirect standard output".
+
+#### I'm getting a "reference to assertEquals is ambiguous" error.
+
+Always try searching the web for mysterious error messages. Recall that self-sufficiency as a programmer is a major goal of 61B. I _think_ the first hit on Google should be enough, but certainly post to Piazza if you're still stuck.
+
+#### The autograder is complaining about my failure sequences.
+
+As you might imagine, the autograder for project 1B is a weirdly complex beast, as it is has to autograde autograder output. To keep things simple *the String argument to a failing assert must contain a failure sequence and ONLY a failure sequence*, and *all tests must fail due to a failing assert*. There should be no failures due to null pointer exceptions. The String argument to your assert statement must contain no extraneous information.
+>>>>>>> c21bbf1eebcb67e01aa47aefb5607482a133709b
