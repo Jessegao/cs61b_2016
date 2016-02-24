@@ -11,6 +11,11 @@ Table of Contents
 - [Task 4: GuitarString](#GuitarString)
 - [Task 5: Iteration and Exceptions](#IterationExceptions)
 
+Getting the Skeleton Files
+--------------------------------
+
+Just the usual `git pull skeleton master`.
+
 Introduction
 --------------------------------
 In this homework, you will learn how to write and use packages, as well as get some hands-on practice with interfaces and abstract classes. We'll also get an opportunity to implement a simple data structure as well as an algorithm that is easy to implement given that data structure. Finally we'll add support for iteration and exceptions  (which we'll cover on Monday) to our data structure.
@@ -22,7 +27,7 @@ For this assignment, we'll create a synthesizer package intended for use by prog
 The synthesizer package has four components:
 
 - `BoundedQueue`, an interface which declares all the methods that must be implemented by any class that implements `BoundedQueue`.
-- `AbstractBoundedQueue`, an abstract class which implements `AbstractBoundedQueue`, capturing the redundancies between methods in `BoundedQueue`.
+- `AbstractBoundedQueue`, an abstract class which implements `BoundedQueue`, capturing the redundancies between methods in `BoundedQueue`.
 - `ArrayRingBuffer`, a class which extends `AbstractBoundedQueue` and uses an array as the actual implementation of the `BoundedQueue`.
 - `GuitarString`, which uses an `ArrayRingBuffer<Double>` to implement the [Karplus-Strong algorithm](http://en.wikipedia.org/wiki/Karplus%E2%80%93Strong_string_synthesis) to synthesize a guitar string sound.
 
@@ -198,7 +203,7 @@ You can play a double value with the StdAudio.play() method. For example StdAudi
 
 Rename `GuitarString.java.skeleton` to `GuitarString.java`. Complete 'GuitarString.java' so that it implements the Karplus-Strong algorithm. 
 
-The provided `TestGuitarString` class provides a sample test `testPluckTheAString` that attempts to play an A-note on a guitar string. You should hear an A-note when you run this test. If you don't, you should consider writing finer grained tests that inspect quantiative behavior of the the class. 
+The provided `TestGuitarString` class provides a sample test `testPluckTheAString` that attempts to play an A-note on a guitar string. You should hear an A-note when you run this test. If you don't, you should try the `testTic` method and debug from there. Consider adding a `print` or `toString` method to `GuitarString.java` that will help you see what's going on between tics.
 
 Once you're relatively comfortable that GuitarString should be working, try compiling and running 'GuitarHeroLite'. It will provide an interface, allowing the user to interactively play sounds using the `synthesizer` package's `GuitarString` class.
 
@@ -213,7 +218,7 @@ Write a program GuitarHero that is similar to GuitarHeroLite, but supports a tot
 
 This keyboard arrangement imitates a piano keyboard: The "white keys" are on the qwerty and zxcv rows and the "black keys" on the 12345 and asdf rows of the keyboard. 
 
-The ith character of the string keyboard corresponds to a frequency of 440 × 2^(i - 24) / 12, so that the character 'q' is 110Hz, 'i' is 220Hz, 'v' is 440Hz, and ' ' is 880Hz. Don't even think of including 37 individual GuitarString variables or a 37-way if statement! Instead, create an array of 37 GuitarString objects and use keyboard.indexOf(key) to figure out which key was typed. Make sure your program does not crash if a key is pressed that does not correspond to one of your 37 notes.
+The ith character of the string keyboard corresponds to a frequency of 440 × 2^((i - 24) / 12), so that the character 'q' is 110Hz, 'i' is 220Hz, 'v' is 440Hz, and ' ' is 880Hz. Don't even think of including 37 individual GuitarString variables or a 37-way if statement! Instead, create an array of 37 GuitarString objects and use keyboard.indexOf(key) to figure out which key was typed. Make sure your program does not crash if a key is pressed that does not correspond to one of your 37 notes.
 
 This part of the assignment is not graded.
 
@@ -250,7 +255,7 @@ Consider your AbstractBoundedQueue. You don't need to change anything in this cl
 
 #### ArrayRingBuffer
 
-Now finally add the required `iterator()` method to `ArrayRingBuffer`. You'll need to define a private class that implements the `Iterator` interface. See lecture 14 for an example.
+Now finally add the required `iterator()` method to `ArrayRingBuffer`. You'll need to define a private class that implements the `Iterator` interface. See lecture 14 for an example: <a href="https://github.com/Berkeley-CS61B/lectureCode-sp16/blob/master/lec14/hugCode/ArrayMap.java">github</a> <a href="https://docs.google.com/presentation/d/1_kI2wXIQqbkMC2-ug03VQeskVMg_kjd1ySy8ocIoxNc/edit">slides</a>.
 
 #### Exceptions
 
@@ -284,9 +289,13 @@ To submit this assignment, you must upload a .zip file containing your synthesiz
 Frequently Asked Questions
 ----------------
 
+#### My AbstractBoundedQueue won't compile because BoundedQueue isn't found.
+
+Look more closely at the AbstractBoundedQueue section of this assignment page for tips.
+
 #### I'm getting a "class file contains wrong class" error.
 
-Make sure all your Java files have the right package declaration at the top. Also make sure that anything that is part of the synthesizer package is in the synthesizer folder.
+Make sure all of your Java files have the right package declaration at the top. Also make sure that anything that is part of the synthesizer package is in the synthesizer folder.
 
 #### I'm getting a message that I did not override an abstract method, but I am!
 
@@ -294,6 +303,10 @@ Chances are you have a typo. You should always use the @Override tag when overri
 
 #### I'm getting ... in AbstractBoundedQueue and ... in BoundedQueue have the same erasure, yet neither overrides the other.
 
-Make sure your classes are defined as `AbstractBoundedQueue<T> extends BoundedQueue<T>` (or whatever type parameter you used instead of T).
+Make sure your classes are defined as `AbstractBoundedQueue<T> implements BoundedQueue<T>` (or whatever type parameter you used instead of T).
+
+#### When I try to run the provided tests I get "No runnable methods".
+
+Make sure you've uncommented the tests, including the `@Test` annotation.
 
 Credits: RingBuffer figures from [wikipedia](http://en.wikipedia.org/wiki/Circular_buffer). This assignment adapted from [Kevin Wayne's Guitar Heroine](http://nifty.stanford.edu/2012/wayne-guitar-heroine/) assignment.
