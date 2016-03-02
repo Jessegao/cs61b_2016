@@ -18,11 +18,13 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
     private int cursorPosition;
     /** The Text to display on the screen. */
     private TextContainer textBuffer;
+    private Cursor cursor;
     private Group root;
 
-    private static final int STARTING_FONT_SIZE = 20;
-    private static final int STARTING_TEXT_POSITION_X = 250;
-    private static final int STARTING_TEXT_POSITION_Y = 250;
+    private int winWidth;
+    private int winHeight;
+
+    private static final int STARTING_FONT_SIZE = 12;
 
     private int fontSize = STARTING_FONT_SIZE;
 
@@ -30,15 +32,17 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
     //remember to call render after every change made
 
-    public KeyEventHandler(final Group root, int windowWidth, int windowHeight) {
+    public KeyEventHandler(final Group root, int windowWidth, int windowHeight, TextContainer t, Cursor c) {
 
         this.root = root;
         // Initialize some empty text and add it to root so that it will be displayed.
-        textBuffer = new TextContainer();
+        textBuffer = t;
         textBuffer.setFont(Font.font(fontName, fontSize));
-
         // All new Nodes need to be added to the root in order to be displayed.
-        textBuffer.render(root, windowWidth, windowHeight);
+        textBuffer.render(windowWidth, windowHeight);
+        cursor = c;
+        winWidth = windowWidth;
+        winHeight = windowHeight;
     }
 
     @Override
@@ -51,21 +55,37 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             if (characterTyped.length() > 0 && characterTyped.charAt(0) != 8) {
                 // Ignore control keys, which have non-zero length, as well as the backspace
                 // key, which is represented as a character of value = 8 on Windows.
-                textBuffer.insert(characterTyped); //IMPORTANT remember to implement the cursor thing
+                cursor.insert(characterTyped);
+                textBuffer.render(winWidth, winHeight);
+                cursor.render();
+                keyEvent.consume();
+            } else if(characterTyped.charAt(0) == 8) {
+                cursor.remove();
+                textBuffer.render(winWidth, winHeight);
+                cursor.render();
                 keyEvent.consume();
             }
-            textBuffer.render(root);
+
+
         } else if (keyEvent.getEventType() == KeyEvent.KEY_PRESSED) {
             // Arrow keys should be processed using the KEY_PRESSED event, because KEY_PRESSED
             // events have a code that we can check (KEY_TYPED events don't have an associated
             // KeyCode).
             KeyCode code = keyEvent.getCode();
-            if (code == KeyCode.UP) {
-                fontSize += 5;
+            if (code == KeyCode.EQUALS || code == KeyCode.PLUS) {
+                fontSize += 4;
                 textBuffer.setFont(Font.font(fontName, fontSize));
-            } else if (code == KeyCode.DOWN) {
-                fontSize = Math.max(0, fontSize - 5);
+                cursor.setFont(Font.font(fontName, fontSize));
+            } else if (code == KeyCode.MINUS) {
+                fontSize = Math.max(0, fontSize - 4);
                 textBuffer.setFont(Font.font(fontName, fontSize));
+                cursor.setFont(Font.font(fontName, fontSize));
+            } else  if (code == KeyCode.LEFT) {
+                cursor.moveLeft();
+                cursor.render();
+            } else if(code == KeyCode.RIGHT) {
+                cursor.moveRight();
+                cursor.render();
             }
         }
     }

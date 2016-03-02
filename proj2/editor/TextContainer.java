@@ -1,8 +1,5 @@
 package editor;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.text.Font;
@@ -13,61 +10,50 @@ import javafx.scene.text.Text;
  * This class will contain all the text and calculate where to display stuff
  */
 public class TextContainer {
-    private LinkedList<Text> container;
+    private LinkedListDeque<Text> container;
+    private static final int MARGIN = 5;
+    private int margins = MARGIN;
+    private Group root;
 
-    private int margins = 5;
-
-    public TextContainer() {
-        container = new LinkedList<Text>();
+    public TextContainer(Group root) {
+        this.root = root;
+        container = new LinkedListDeque<Text>();
     }
 
-    public TextContainer(String s) {
-        container = new LinkedList<Text>();
-        container.add(new Text(s));
+    public static int getMARGIN() {
+        return MARGIN;
     }
 
-    //two insert methods for easy adding of new elements
-    public void insert(String s) {
+    public Text get(int i) {
+        return container.get(i);
+    }
+
+    //used for the first call from cursor's constructor
+    public Node<Text> getFirst() {
+        return container.getFirst();
+    }
+
+    public void insert(String s, Node n) {
         Text t = new Text(s);
         t.setTextOrigin(VPos.TOP);
-        container.add(t);
+        container.insertAtNode(t, n);
     }
 
-    public void insert(String s, int i) {
-        Text t = new Text(s);
-        t.setTextOrigin(VPos.TOP);
-        container.add(i, t);
+    public void remove(Node node) {
+        root.getChildren().remove(container.removeAtNode(node));
     }
+
     //ALWAYS REMEMBER TO UPDATE BOTH OVERLOADED METHODS
-    public void render(final Group root, int windowWidth, int windowHeight) {
-        //update eventually so that it only renders from the cursor position
+    public void render(int windowWidth, int windowHeight) {
         double renderingPosX = margins;
         double renderingPosY = 0.0;
 
-        for(Text t : container) {
+        for(int i = 0; i < container.size(); i++) {
+            Text t = container.get(i);
             //set up where each text object is
-            t.setX(renderingPosX + t.getLayoutBounds().getWidth()/2.0);
+            t.setX(renderingPosX);
             renderingPosX += t.getLayoutBounds().getWidth();
-            t.setY(renderingPosY + t.getLayoutBounds().getHeight()/2.0);
-            //remember to adjust y once word wrapping is implemented
-            if (!root.getChildren().contains(t)) {
-                root.getChildren().add(t);
-                t.toFront();
-            }
-        }
-    }
-
-    //doesnt adjust any lines based on window dimensions
-    public void render(final Group root) {
-        //update eventually so that it only renders from the cursor position
-        double renderingPosX = 0.0;
-        double renderingPosY = 0.0;
-
-        for(Text t : container) {
-            //set up where each text object is
-            t.setX(renderingPosX + t.getLayoutBounds().getWidth()/2.0);
-            renderingPosX += t.getLayoutBounds().getWidth();
-            t.setY(renderingPosY + t.getLayoutBounds().getHeight()/2.0);
+            t.setY(renderingPosY);
             //remember to adjust y once word wrapping is implemented
             if (!root.getChildren().contains(t)) {
                 root.getChildren().add(t);
@@ -77,7 +63,8 @@ public class TextContainer {
     }
 
     public void setFont(Font font) {
-        for (Text t : container) {
+        for(int i = 0; i < container.size(); i++) {
+            Text t = container.get(i);
             t.setFont(font);
         }
     }

@@ -1,14 +1,11 @@
 package editor;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
@@ -17,8 +14,8 @@ import javafx.stage.Stage;
 public class Editor extends Application {
     private static final int WINDOW_WIDTH = 500;
     private static final int WINDOW_HEIGHT = 500;
-    private final int MARGIN = 10;
-    private TextContainer displayText;
+    private Cursor cursor;
+    private TextContainer textBuffer;
 
     @Override
     public void start(Stage primaryStage) {
@@ -28,11 +25,17 @@ public class Editor extends Application {
         // of the window displayed.
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
 
+        //initializes the cursor and textcontainer for the handlers to use
+        textBuffer = new TextContainer(root);
+        cursor = new Cursor(root, textBuffer);
+        //make cursor appear and blink
+        cursor.render();
+        cursor.blink();
         // To get information about what keys the user is pressing, create an EventHandler.
         // EventHandler subclasses must override the "handle" function, which will be called
         // by javafx.
         EventHandler<KeyEvent> keyEventHandler =
-                new KeyEventHandler(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+                new KeyEventHandler(root, WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor);
         // Register the event handler to be called for all KEY_PRESSED and KEY_TYPED events.
         scene.setOnKeyTyped(keyEventHandler);
         scene.setOnKeyPressed(keyEventHandler);
