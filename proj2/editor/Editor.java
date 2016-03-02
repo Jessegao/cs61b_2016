@@ -28,9 +28,6 @@ public class Editor extends Application {
         //initializes the cursor and textcontainer for the handlers to use
         textBuffer = new TextContainer(root);
         cursor = new Cursor(root, textBuffer);
-        //make cursor appear and blink
-        cursor.render();
-        cursor.blink();
         // To get information about what keys the user is pressing, create an EventHandler.
         // EventHandler subclasses must override the "handle" function, which will be called
         // by javafx.

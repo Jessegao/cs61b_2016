@@ -41,13 +41,17 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         // All new Nodes need to be added to the root in order to be displayed.
         textBuffer.render(windowWidth, windowHeight);
         cursor = c;
+        //make cursor appear and blink
+        cursor.render();
+        cursor.blink();
+
         winWidth = windowWidth;
         winHeight = windowHeight;
     }
 
     @Override
     public void handle(KeyEvent keyEvent) {
-        if (keyEvent.getEventType() == KeyEvent.KEY_TYPED) {
+        if (keyEvent.getEventType() == KeyEvent.KEY_TYPED && !keyEvent.isShortcutDown()) {
             // Use the KEY_TYPED event rather than KEY_PRESSED for letter keys, because with
             // the KEY_TYPED event, javafx handles the "Shift" key and associated
             // capitalization.
@@ -72,11 +76,11 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             // events have a code that we can check (KEY_TYPED events don't have an associated
             // KeyCode).
             KeyCode code = keyEvent.getCode();
-            if (code == KeyCode.EQUALS || code == KeyCode.PLUS) {
+            if ((code == KeyCode.EQUALS || code == KeyCode.PLUS) && keyEvent.isShortcutDown()) {
                 fontSize += 4;
                 textBuffer.setFont(Font.font(fontName, fontSize));
                 cursor.setFont(Font.font(fontName, fontSize));
-            } else if (code == KeyCode.MINUS) {
+            } else if (code == KeyCode.MINUS && keyEvent.isShortcutDown()) {
                 fontSize = Math.max(0, fontSize - 4);
                 textBuffer.setFont(Font.font(fontName, fontSize));
                 cursor.setFont(Font.font(fontName, fontSize));

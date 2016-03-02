@@ -81,7 +81,7 @@ public class Cursor {
         t.setFont(f);
         root.getChildren().remove(cursor);
         cursor = new Rectangle(CURSORWIDTH, t.getLayoutBounds().getHeight());
-        root.getChildren().add(cursor);
+        render();
     }
 
     public void moveLeft() {
