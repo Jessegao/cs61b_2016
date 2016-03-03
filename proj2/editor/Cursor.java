@@ -9,6 +9,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
 
 /**
  * Created by jesse on 2/29/16.
@@ -34,11 +35,16 @@ public class Cursor {
         renderPosX = TextContainer.getMARGIN();
         renderPosY = 0;
         cursor = new Rectangle(CURSORWIDTH, STARTING_FONT_SIZE);
+        cursor.setX(renderPosX);
         node = container.getFirst();
     }
 
     public int getListPosition(){
         return listPosition;
+    }
+
+    public String getPosition() {
+        return "(" + renderPosX + ", " + renderPosY + ")";
     }
 
     //called by the EventHandler so that the cursor will insert where it is at. Might need to overload for copy and paste
@@ -70,9 +76,10 @@ public class Cursor {
         }
         cursor.setX(renderPosX);
         cursor.setY(renderPosY);
-        if(!root.getChildren().contains(cursor)){
-            root.getChildren().add(cursor);
-        }
+    }
+
+    public void firstRender() {
+        root.getChildren().add(cursor);
     }
 
     /** An EventHandler to handle blinking. */

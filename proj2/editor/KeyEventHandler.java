@@ -42,7 +42,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         textBuffer.render(windowWidth, windowHeight);
         cursor = c;
         //make cursor appear and blink
-        cursor.render();
+        cursor.firstRender();
         cursor.blink();
 
         winWidth = windowWidth;
@@ -90,6 +90,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             } else if(code == KeyCode.RIGHT) {
                 cursor.moveRight();
                 cursor.render();
+            } else if(code == KeyCode.P && keyEvent.isShortcutDown()) {
+                System.out.println(cursor.getPosition());
             }
         }
     }
