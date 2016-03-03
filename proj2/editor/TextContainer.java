@@ -60,19 +60,18 @@ public class TextContainer {
             node = node.next;
             Text t = (Text) node.item;
             //set up where each text object is and wrapping
-            if (renderingPosX + t.getLayoutBounds().getWidth() > windowWidth) {
-                //temporary quick solution to backtrack and indent at a space
-                //STILL NEEDS TO DETECT THE START OF ITS OWN LINE
-                while(!(node.previous.item.toString() == " ")) {
-                    node = node.previous;
-                }
+            if (calcEdgePos(renderingPosX, t.getLayoutBounds().getWidth()) > windowWidth) {
 
-                //creates new line
-                renderingPosX = margins;
-                //check here if spacing becomes weird
-                renderingPosY += t.getLayoutBounds().getHeight();
-                //adds new element to linePositions
-                linePositions.addLast(new NewLinePosition(renderingPosY, node));
+                Node backtracked = findIndentNode(node);
+                if(backtracked != null) {
+                    node = backtracked;
+                    //creates new line
+                    renderingPosX = margins;
+                    //check here if spacing becomes weird
+                    renderingPosY += t.getLayoutBounds().getHeight();
+                    //adds new element to linePositions
+                    linePositions.addLast(new NewLinePosition(renderingPosY, node));
+                }
 
             } else if(t.getText() == "\n") {
 
@@ -81,11 +80,32 @@ public class TextContainer {
             renderingPosX += t.getLayoutBounds().getWidth();
             t.setY(renderingPosY);
 
-            //remember to adjust y once word wrapping is implemented
+            //needs to be linear
             if (!root.getChildren().contains(t)) {
                 root.getChildren().add(t);
                 t.toFront();
             }
+        }
+    }
+
+    //calculates the right edge of the text including the margin
+    private double calcEdgePos(double leftPos, double width) {
+        return leftPos + width + margins;
+    }
+
+    //returns the node at which you should abstractly indent the text to make it wrap. returns null if
+    //the line cannot be indented.
+    private Node findIndentNode(Node n) {
+        Node node = n;
+        Text text = (Text) n.item;
+        while(text.getX() != margins || text.toString() == " ") {
+            node = node.previous;
+            text = (Text) n.item;
+        }
+        if(text.getX() == margins) {
+            return null;
+        } else {
+            return node;
         }
     }
 
