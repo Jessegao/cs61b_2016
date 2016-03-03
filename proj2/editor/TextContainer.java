@@ -73,8 +73,11 @@ public class TextContainer {
                     linePositions.addLast(new NewLinePosition(renderingPosY, node));
                 }
 
-            } else if(t.getText() == "\n") {
-
+            } else if(t.getText().equals("\r")) {
+                //creates new line
+                renderingPosX = margins;
+                //check here if spacing becomes weird
+                renderingPosY += t.getLayoutBounds().getHeight()/2;
             }
             t.setX(renderingPosX);
             renderingPosX += t.getLayoutBounds().getWidth();
@@ -100,7 +103,7 @@ public class TextContainer {
         Text text = (Text) n.item;
         while(text.getX() != margins || text.toString() == " ") {
             node = node.previous;
-            text = (Text) n.item;
+            text = (Text) node.item;
         }
         if(text.getX() == margins) {
             return null;

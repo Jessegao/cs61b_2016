@@ -44,7 +44,7 @@ public class Cursor {
     }
 
     public String getPosition() {
-        return "(" + renderPosX + ", " + renderPosY + ")";
+        return (int)renderPosX + ", " + (int)renderPosY;
     }
 
     //called by the EventHandler so that the cursor will insert where it is at. Might need to overload for copy and paste
@@ -64,6 +64,11 @@ public class Cursor {
         } else {
             listPosition = 0;
         }
+    }
+
+    //puts the cursor on a new line (for when the newline key is hit)
+    public void newLine() {
+
     }
 
     public void render(){
