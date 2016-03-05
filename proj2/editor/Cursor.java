@@ -22,7 +22,8 @@ public class Cursor {
     private Node<Text> node;
     private double renderPosX;
     private double renderPosY;
-    private double margin;
+    private double leftMargin;
+    private double rightMargin;
     private Rectangle cursor;
 
     //keeps track of what the last action was for ambiguous line placement
@@ -37,8 +38,9 @@ public class Cursor {
     public Cursor(Group root, TextContainer t){
         this.root = root;
         container = t;
-        margin = TextContainer.getMARGIN();
-        renderPosX = margin;
+        leftMargin = t.getLeftMargin();
+        rightMargin = t.getRightMargin();
+        renderPosX = leftMargin;
         renderPosY = 0;
         cursor = new Rectangle(CURSORWIDTH, STARTING_FONT_SIZE);
         cursor.setX(renderPosX);
@@ -59,13 +61,14 @@ public class Cursor {
         container.insert(s, node);
         node = node.next;
         listPosition++;
+        shouldStayOnLine = false;
     }
 
     public void remove() {
         listPosition--;
         if (listPosition >= 0) {
             //decides if the cursor should stay on the same line
-            if(((Text) node.previous.getItem()) != null && ((Text) node.getItem()).getX() == margin && ((Text) node.previous.getItem()).getText().equals(" ")) {
+            if(((Text) node.previous.getItem()) != null && ((Text) node.getItem()).getX() == leftMargin && ((Text) node.previous.getItem()).getText().equals(" ")) {
                 shouldStayOnLine = true;
             }
             Node oldnode = node;
@@ -78,16 +81,18 @@ public class Cursor {
 
 
     public void render(int windowWidth, int windowHeight){
+        //change so that it would adjust to the correct leftMargin
         if (shouldStayOnLine) {
-            renderPosX = TextContainer.getMARGIN();
+            renderPosX = leftMargin;
             shouldStayOnLine = false;
-        } else if (node.item != null && node.item.getText().equals(" ") && node.item.getX() + margin > windowWidth) {
-
+        } else if (node.item != null && node.item.getText().equals(" ") && node.item.getX() + node.item.getLayoutBounds().getWidth() + rightMargin > windowWidth) { //if cursor is on a space character beyond the bounds
+            renderPosX = windowWidth - rightMargin;
+            renderPosY = ((Text) node.item).getY();
         } else if (node.item != null){
             renderPosX = ((Text) node.item).getLayoutBounds().getWidth() + ((Text) node.item).getX();
             renderPosY = ((Text) node.item).getY();
         } else {
-            renderPosX = TextContainer.getMARGIN();
+            renderPosX = leftMargin;
             renderPosY = 0;
         }
         cursor.setX(renderPosX);

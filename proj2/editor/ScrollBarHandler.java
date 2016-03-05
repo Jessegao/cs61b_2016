@@ -12,8 +12,15 @@ import javafx.scene.control.ScrollBar;
 public class ScrollBarHandler {
 
     private ScrollBar scrollBar;
+
     private Group root;
     private Group textRoot;
+    private int windowHeight;
+    private int textHeight;
+
+    public ScrollBar getScrollBar() {
+        return scrollBar;
+    }
 
     public void updateXPos(int windowWidth) {
         double usableScreenWidth = windowWidth - scrollBar.getLayoutBounds().getWidth();
@@ -24,6 +31,10 @@ public class ScrollBarHandler {
         scrollBar.setPrefHeight(windowHeight);
     }
 
+    public void updateMax() {
+        scrollBar.setMax(Math.max(0, (int) textRoot.getLayoutBounds().getHeight() - windowHeight));
+    }
+
     public ScrollBarHandler(Group root, Group textRoot, int WINDOW_WIDTH, int WINDOW_HEIGHT) {
         this.root = root;
         this.textRoot = textRoot;
@@ -32,10 +43,10 @@ public class ScrollBarHandler {
         scrollBar.setOrientation(Orientation.VERTICAL);
         // Set the height of the scroll bar so that it fills the whole window.
         scrollBar.setPrefHeight(WINDOW_HEIGHT);
-
+        windowHeight = WINDOW_HEIGHT;
         // Set the range of the scroll bar.
         scrollBar.setMin(0);
-        scrollBar.setMax(WINDOW_HEIGHT);
+        updateMax();
 
         double usableScreenWidth = WINDOW_WIDTH - scrollBar.getLayoutBounds().getWidth();
         scrollBar.setLayoutX(usableScreenWidth);
@@ -50,11 +61,10 @@ public class ScrollBarHandler {
                 // and max we set above. For example, if the scroll bar is exactly in the middle of
                 // the scroll area, the position will be:
                 //      scroll minimum + (scroll maximum - scroll minimum) / 2
+                updateMax();
                 textRoot.setLayoutY(Math.round(-newValue.doubleValue()));
             }
         });
-
-
 
         // Add the scroll bar to the scene graph, so that it appears on the screen.
         root.getChildren().add(scrollBar);

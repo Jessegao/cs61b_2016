@@ -87,7 +87,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 textBuffer.setFont(Font.font(fontName, fontSize));
                 cursor.setFont(Font.font(fontName, fontSize), windowWidth, windowHeight);
             } else if (code == KeyCode.MINUS && keyEvent.isShortcutDown()) {
-                fontSize = Math.max(0, fontSize - 4);
+                fontSize = Math.max(4, fontSize - 4);
                 textBuffer.setFont(Font.font(fontName, fontSize));
                 cursor.setFont(Font.font(fontName, fontSize), windowWidth, windowHeight);
             } else  if (code == KeyCode.LEFT) {

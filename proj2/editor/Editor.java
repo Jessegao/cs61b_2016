@@ -28,7 +28,6 @@ public class Editor extends Application {
     private Scene scene;
     private ResizeHandler resizeHandler;
 
-
     @Override
     public void start(Stage primaryStage) {
         // Create a Node that will be the parent of all things displayed on the screen.
@@ -42,7 +41,7 @@ public class Editor extends Application {
         scroller = new ScrollBarHandler(root, textRoot, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         //initializes the cursor and textcontainer for the handlers to use
-        textBuffer = new TextContainer(textRoot);
+        textBuffer = new TextContainer(textRoot, scroller);
         cursor = new Cursor(textRoot, textBuffer);
         // To get information about what keys the user is pressing, create an EventHandler.
         // EventHandler subclasses must override the "handle" function, which will be called

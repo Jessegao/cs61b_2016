@@ -17,6 +17,7 @@ public class ResizeHandler {
                 keyEventHandler.changeWindowWidth(newScreenWidth.intValue());
                 keyEventHandler.render();
                 scrollBarHandler.updateXPos(newScreenWidth.intValue());
+                scrollBarHandler.updateMax();
             }
         });
         scene.heightProperty().addListener(new ChangeListener<Number>() {
@@ -27,6 +28,7 @@ public class ResizeHandler {
                 keyEventHandler.changeWindowHeight(newScreenHeight.intValue());
                 keyEventHandler.render();
                 scrollBarHandler.updateHeight(newScreenHeight.intValue());
+                scrollBarHandler.updateMax();
             }
         });
     }
