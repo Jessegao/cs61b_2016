@@ -21,7 +21,11 @@ public class Cursor {
     private Node<Text> node;
     private double renderPosX;
     private double renderPosY;
+    private double margin;
     private Rectangle cursor;
+
+    //keeps track of what the last action was for ambiguous line placement
+    private static String lastAction = "null";
 
     private final static double CURSORWIDTH = 1.0;
     private static final int STARTING_FONT_SIZE = 12;
@@ -32,7 +36,8 @@ public class Cursor {
     public Cursor(Group root, TextContainer t){
         this.root = root;
         container = t;
-        renderPosX = TextContainer.getMARGIN();
+        margin = TextContainer.getMARGIN();
+        renderPosX = margin;
         renderPosY = 0;
         cursor = new Rectangle(CURSORWIDTH, STARTING_FONT_SIZE);
         cursor.setX(renderPosX);
@@ -53,10 +58,12 @@ public class Cursor {
         container.insert(s, node);
         node = node.next;
         listPosition++;
+        lastAction = "add";
     }
 
     public void remove() {
         listPosition--;
+        lastAction = "remove";
         if (listPosition >= 0) {
             Node oldnode = node;
             node = node.previous;
@@ -66,14 +73,13 @@ public class Cursor {
         }
     }
 
-    //puts the cursor on a new line (for when the newline key is hit)
-    public void newLine() {
-
-    }
 
     public void render(){
-        if (node.item != null) {
-            renderPosX = ((Text) node.item).getLayoutBounds().getWidth() + ((Text) node.item).getX() + 1;
+        if (lastAction.equals("remove") && renderPosY != ((Text) node.item).getY()) {
+            renderPosX = TextContainer.getMARGIN();
+            lastAction = "null";
+        } else if (node.item != null) {
+            renderPosX = ((Text) node.item).getLayoutBounds().getWidth() + ((Text) node.item).getX();
             renderPosY = ((Text) node.item).getY();
         } else {
             renderPosX = TextContainer.getMARGIN();

@@ -1,5 +1,6 @@
 package editor;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.text.Font;
@@ -57,17 +58,25 @@ public class TextContainer {
         linePositions.addLast(new NewLinePosition(renderingPosY, node));
 
         while(node.next.item != null) {
+            //remember to update node and text together
             node = node.next;
             Text t = (Text) node.item;
-            //set up where each text object is and wrapping
+            //set up text wrapping
             if (calcEdgePos(renderingPosX, t.getLayoutBounds().getWidth()) > windowWidth) {
 
                 Node backtracked = findIndentNode(node);
+                //if backtrack does find a node to be indented, it will set the new line's position for the node
                 if(backtracked != null) {
+                    //points the rendering position back to where it needs to re-render
                     node = backtracked;
+                    t = (Text) backtracked.item;
                     //creates new line
                     renderingPosX = margins;
-                    //check here if spacing becomes weird
+                    renderingPosY += t.getLayoutBounds().getHeight();
+                    //adds new element to linePositions
+                    linePositions.addLast(new NewLinePosition(renderingPosY, node));
+                } else {
+                    renderingPosX = margins;
                     renderingPosY += t.getLayoutBounds().getHeight();
                     //adds new element to linePositions
                     linePositions.addLast(new NewLinePosition(renderingPosY, node));
@@ -79,6 +88,9 @@ public class TextContainer {
                 //check here if spacing becomes weird
                 renderingPosY += t.getLayoutBounds().getHeight()/2;
             }
+            //rounding the positions
+            renderingPosX = Math.round(renderingPosX);
+            renderingPosY = Math.round(renderingPosY);
             t.setX(renderingPosX);
             renderingPosX += t.getLayoutBounds().getWidth();
             t.setY(renderingPosY);
@@ -101,14 +113,17 @@ public class TextContainer {
     private Node findIndentNode(Node n) {
         Node node = n;
         Text text = (Text) n.item;
-        while(text.getX() != margins || text.toString() == " ") {
+        //backtracks until it reaches a space or until it reaches the beginning of the line
+        while(text.getX() != margins && !text.getText().equals(" ")) {
             node = node.previous;
             text = (Text) node.item;
         }
         if(text.getX() == margins) {
             return null;
-        } else {
+        } else if(((Text) node.previous.item).getText().equals(" ") && text.getText().equals(" ")){ //special case where multiple spaces at the end would cause rendering problems
             return node;
+        } else {
+            return node.next;
         }
     }
 

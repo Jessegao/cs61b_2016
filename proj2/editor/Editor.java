@@ -1,8 +1,10 @@
 package editor;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -14,16 +16,26 @@ import javafx.stage.Stage;
 public class Editor extends Application {
     private static final int WINDOW_WIDTH = 500;
     private static final int WINDOW_HEIGHT = 500;
+
+    private int windowWidth = WINDOW_WIDTH;
+    private int windowHeight = WINDOW_HEIGHT;
+
     private Cursor cursor;
     private TextContainer textBuffer;
+    private Group root;
+    private ScrollBarHandler scroller;
+    private Scene scene;
+
 
     @Override
     public void start(Stage primaryStage) {
         // Create a Node that will be the parent of all things displayed on the screen.
-        Group root = new Group();
+        root = new Group();
         // The Scene represents the window: its height and width will be the height and width
         // of the window displayed.
-        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+        scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
+
+        scroller = new ScrollBarHandler(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         //initializes the cursor and textcontainer for the handlers to use
         textBuffer = new TextContainer(root);
