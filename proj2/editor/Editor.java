@@ -23,6 +23,7 @@ public class Editor extends Application {
     private Cursor cursor;
     private TextContainer textBuffer;
     private Group root;
+    private Group textRoot;
     private ScrollBarHandler scroller;
     private Scene scene;
 
@@ -31,6 +32,8 @@ public class Editor extends Application {
     public void start(Stage primaryStage) {
         // Create a Node that will be the parent of all things displayed on the screen.
         root = new Group();
+        textRoot = new Group();
+        root.getChildren().add(textRoot);
         // The Scene represents the window: its height and width will be the height and width
         // of the window displayed.
         scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);

@@ -1,4 +1,5 @@
 package editor;
+import com.sun.javafx.scene.control.skin.LabeledText;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -25,7 +26,7 @@ public class Cursor {
     private Rectangle cursor;
 
     //keeps track of what the last action was for ambiguous line placement
-    private static String lastAction = "null";
+    private boolean shouldStayOnLine = false;
 
     private final static double CURSORWIDTH = 1.0;
     private static final int STARTING_FONT_SIZE = 12;
@@ -58,13 +59,15 @@ public class Cursor {
         container.insert(s, node);
         node = node.next;
         listPosition++;
-        lastAction = "add";
     }
 
     public void remove() {
         listPosition--;
-        lastAction = "remove";
         if (listPosition >= 0) {
+            //decides if the cursor should stay on the same line
+            if(((Text) node.previous.getItem()) != null && ((Text) node.getItem()).getX() == margin && ((Text) node.previous.getItem()).getText().equals(" ")) {
+                shouldStayOnLine = true;
+            }
             Node oldnode = node;
             node = node.previous;
             container.remove(oldnode);
@@ -74,11 +77,13 @@ public class Cursor {
     }
 
 
-    public void render(){
-        if (lastAction.equals("remove") && renderPosY != ((Text) node.item).getY()) {
+    public void render(int windowWidth, int windowHeight){
+        if (shouldStayOnLine) {
             renderPosX = TextContainer.getMARGIN();
-            lastAction = "null";
-        } else if (node.item != null) {
+            shouldStayOnLine = false;
+        } else if (node.item != null && node.item.getText().equals(" ") && node.item.getX() + margin > windowWidth) {
+
+        } else if (node.item != null){
             renderPosX = ((Text) node.item).getLayoutBounds().getWidth() + ((Text) node.item).getX();
             renderPosY = ((Text) node.item).getY();
         } else {
@@ -91,15 +96,16 @@ public class Cursor {
 
     public void firstRender() {
         root.getChildren().add(cursor);
+        cursor.toFront();
     }
 
     /** An EventHandler to handle blinking. */
-    public void setFont(Font f){
+    public void setFont(Font f, int windowWidth, int windowHeight){
         Text t = new Text(" ");
         t.setFont(f);
         root.getChildren().remove(cursor);
         cursor = new Rectangle(CURSORWIDTH, t.getLayoutBounds().getHeight());
-        render();
+        render(windowWidth, windowHeight);
     }
 
     public void moveLeft() {

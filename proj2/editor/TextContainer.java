@@ -1,6 +1,5 @@
 package editor;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.text.Font;
@@ -42,6 +41,8 @@ public class TextContainer {
         t.setFont(font);
         t.setTextOrigin(VPos.TOP);
         container.insertAtNode(t, n);
+        root.getChildren().add(t);
+        t.toFront();
     }
 
     public void remove(Node node) {
@@ -62,7 +63,7 @@ public class TextContainer {
             node = node.next;
             Text t = (Text) node.item;
             //set up text wrapping
-            if (calcEdgePos(renderingPosX, t.getLayoutBounds().getWidth()) > windowWidth) {
+            if (calcEdgePos(renderingPosX, t.getLayoutBounds().getWidth()) > windowWidth && !t.getText().equals(" ")) {
 
                 Node backtracked = findIndentNode(node);
                 //if backtrack does find a node to be indented, it will set the new line's position for the node
@@ -95,11 +96,11 @@ public class TextContainer {
             renderingPosX += t.getLayoutBounds().getWidth();
             t.setY(renderingPosY);
 
-            //needs to be linear
-            if (!root.getChildren().contains(t)) {
-                root.getChildren().add(t);
-                t.toFront();
-            }
+            //bad, takes n squared time
+            //if (!root.getChildren().contains(t)) {
+            //    root.getChildren().add(t);
+            //    t.toFront();
+            //}
         }
     }
 
@@ -120,8 +121,6 @@ public class TextContainer {
         }
         if(text.getX() == margins) {
             return null;
-        } else if(((Text) node.previous.item).getText().equals(" ") && text.getText().equals(" ")){ //special case where multiple spaces at the end would cause rendering problems
-            return node;
         } else {
             return node.next;
         }

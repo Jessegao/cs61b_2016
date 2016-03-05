@@ -21,8 +21,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
     private Cursor cursor;
     private Group root;
 
-    private int winWidth;
-    private int winHeight;
+    private int windowWidth;
+    private int windowHeight;
 
     private static final int STARTING_FONT_SIZE = 12;
 
@@ -45,8 +45,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         cursor.firstRender();
         cursor.blink();
 
-        winWidth = windowWidth;
-        winHeight = windowHeight;
+        this.windowWidth = windowWidth;
+        this.windowHeight = windowHeight;
     }
 
     @Override
@@ -60,13 +60,13 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 // Ignore control keys, which have non-zero length, as well as the backspace
                 // key, which is represented as a character of value = 8 on Windows.
                 cursor.insert(characterTyped);
-                textBuffer.render(winWidth, winHeight);
-                cursor.render();
+                textBuffer.render(windowWidth, windowHeight);
+                cursor.render(windowWidth, windowHeight);
                 keyEvent.consume();
             } else if(characterTyped.charAt(0) == 8) {
                 cursor.remove();
-                textBuffer.render(winWidth, winHeight);
-                cursor.render();
+                textBuffer.render(windowWidth, windowHeight);
+                cursor.render(windowWidth, windowHeight);
                 keyEvent.consume();
             }
 
@@ -79,17 +79,17 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             if ((code == KeyCode.EQUALS || code == KeyCode.PLUS) && keyEvent.isShortcutDown()) {
                 fontSize += 4;
                 textBuffer.setFont(Font.font(fontName, fontSize));
-                cursor.setFont(Font.font(fontName, fontSize));
+                cursor.setFont(Font.font(fontName, fontSize), windowWidth, windowHeight);
             } else if (code == KeyCode.MINUS && keyEvent.isShortcutDown()) {
                 fontSize = Math.max(0, fontSize - 4);
                 textBuffer.setFont(Font.font(fontName, fontSize));
-                cursor.setFont(Font.font(fontName, fontSize));
+                cursor.setFont(Font.font(fontName, fontSize), windowWidth, windowHeight);
             } else  if (code == KeyCode.LEFT) {
                 cursor.moveLeft();
-                cursor.render();
+                cursor.render(windowWidth, windowHeight);
             } else if(code == KeyCode.RIGHT) {
                 cursor.moveRight();
-                cursor.render();
+                cursor.render(windowWidth, windowHeight);
             } else if(code == KeyCode.P && keyEvent.isShortcutDown()) {
                 System.out.println(cursor.getPosition());
             }
