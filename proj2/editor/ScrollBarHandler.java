@@ -1,5 +1,7 @@
 package editor;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollBar;
@@ -10,8 +12,21 @@ import javafx.scene.control.ScrollBar;
 public class ScrollBarHandler {
 
     private ScrollBar scrollBar;
+    private Group root;
+    private Group textRoot;
 
-    public ScrollBarHandler(Group root, int WINDOW_WIDTH, int WINDOW_HEIGHT) {
+    public void updateXPos(int windowWidth) {
+        double usableScreenWidth = windowWidth - scrollBar.getLayoutBounds().getWidth();
+        scrollBar.setLayoutX(usableScreenWidth);
+    }
+
+    public void updateHeight(int windowHeight) {
+        scrollBar.setPrefHeight(windowHeight);
+    }
+
+    public ScrollBarHandler(Group root, Group textRoot, int WINDOW_WIDTH, int WINDOW_HEIGHT) {
+        this.root = root;
+        this.textRoot = textRoot;
         // Make a vertical scroll bar on the right side of the screen.
         scrollBar = new ScrollBar();
         scrollBar.setOrientation(Orientation.VERTICAL);
@@ -19,11 +34,27 @@ public class ScrollBarHandler {
         scrollBar.setPrefHeight(WINDOW_HEIGHT);
 
         // Set the range of the scroll bar.
-        scrollBar.setMin(WINDOW_HEIGHT);
+        scrollBar.setMin(0);
         scrollBar.setMax(WINDOW_HEIGHT);
 
         double usableScreenWidth = WINDOW_WIDTH - scrollBar.getLayoutBounds().getWidth();
         scrollBar.setLayoutX(usableScreenWidth);
+
+        scrollBar.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(
+                    ObservableValue<? extends Number> observableValue,
+                    Number oldValue,
+                    Number newValue) {
+                // newValue describes the value of the new position of the scroll bar. The numerical
+                // value of the position is based on the position of the scroll bar, and on the min
+                // and max we set above. For example, if the scroll bar is exactly in the middle of
+                // the scroll area, the position will be:
+                //      scroll minimum + (scroll maximum - scroll minimum) / 2
+                textRoot.setLayoutY(Math.round(-newValue.doubleValue()));
+            }
+        });
+
+
 
         // Add the scroll bar to the scene graph, so that it appears on the screen.
         root.getChildren().add(scrollBar);

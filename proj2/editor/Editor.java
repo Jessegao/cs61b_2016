@@ -26,6 +26,7 @@ public class Editor extends Application {
     private Group textRoot;
     private ScrollBarHandler scroller;
     private Scene scene;
+    private ResizeHandler resizeHandler;
 
 
     @Override
@@ -38,19 +39,21 @@ public class Editor extends Application {
         // of the window displayed.
         scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT, Color.WHITE);
 
-        scroller = new ScrollBarHandler(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scroller = new ScrollBarHandler(root, textRoot, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         //initializes the cursor and textcontainer for the handlers to use
-        textBuffer = new TextContainer(root);
-        cursor = new Cursor(root, textBuffer);
+        textBuffer = new TextContainer(textRoot);
+        cursor = new Cursor(textRoot, textBuffer);
         // To get information about what keys the user is pressing, create an EventHandler.
         // EventHandler subclasses must override the "handle" function, which will be called
         // by javafx.
         EventHandler<KeyEvent> keyEventHandler =
-                new KeyEventHandler(root, WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor);
+                new KeyEventHandler(WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor);
         // Register the event handler to be called for all KEY_PRESSED and KEY_TYPED events.
         scene.setOnKeyTyped(keyEventHandler);
         scene.setOnKeyPressed(keyEventHandler);
+
+        resizeHandler = new ResizeHandler(scene, (KeyEventHandler) keyEventHandler, scroller);
 
         primaryStage.setTitle("Editor");
 

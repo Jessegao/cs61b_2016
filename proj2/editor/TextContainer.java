@@ -126,22 +126,6 @@ public class TextContainer {
         }
     }
 
-    //steps backwards until it reaches a space or the beginning of the line
-    /*private NewLinePosition backTrack(Node<Text> n) {
-        int unitsBacktracked = 1;
-        Node tracker = n;
-        if(n.item == null) {
-            throw new RuntimeException("The window is too small to display Texts of this size");
-        } else {
-            //moves backwards until it hits a space
-            while (!(tracker.previous.item.toString() == " " || tracker.previous.item == null)){
-                unitsBacktracked++;
-                tracker = tracker.previous;
-            }
-            return new NewLinePosition(tracker.item.get, tracker);
-        }
-    }*/
-
     public void setFont(Font font) {
         this.font = font;
     }
