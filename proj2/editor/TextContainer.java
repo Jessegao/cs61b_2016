@@ -80,7 +80,7 @@ public class TextContainer {
             node = node.next;
             Text t = (Text) node.item;
             //set up text wrapping
-            if (calcEdgePos(renderingPosX, t.getLayoutBounds().getWidth()) > windowWidth && !t.getText().equals(" ") && !(t.getText().equals("\r") || t.getText().equals("\n"))) {
+            if (calcEdgePos(renderingPosX, t.getLayoutBounds().getWidth()) > windowWidth && !t.getText().equals(" ") && !(t.getText().equals("\r") || t.getText().equals("\n"))) {//This is excluding spaces and newlines that go beyond the window's boundaries
                 Node backtracked = findIndentNode(node);
                 //if backtrack does find a node to be indented, it will set the new line's position for the node
                 if (backtracked != null) {

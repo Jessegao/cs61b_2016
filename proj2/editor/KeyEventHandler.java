@@ -44,6 +44,11 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         this.windowHeight = windowHeight;
     }
 
+    public void moveCursor(Node n) {
+        cursor.moveTo(n);
+        cursor.render(windowWidth, windowHeight);
+    }
+
     public void changeWindowWidth(int width) {
         windowWidth = width;
     }

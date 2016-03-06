@@ -3,6 +3,7 @@ package editor;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
         double mousePressedY = mouseEvent.getY();
         EventType eventType = mouseEvent.getEventType();
         if (eventType == MouseEvent.MOUSE_PRESSED) {
-            // needs to adjust cursor
+            adjustCursor(mousePressedX, mousePressedY);
         } else if (eventType == MouseEvent.MOUSE_DRAGGED) {
             //ec implementation
         } else if (eventType == MouseEvent.MOUSE_RELEASED) {
@@ -36,17 +37,43 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
 
     public void adjustCursor(double mousePressedX, double mousePressedY) {
         //need to check that everything is still on the same line before searching for closest
+        Node node = searchVertical(mousePressedY);
+
+        if (node.item == null) {
+            return;
+        }
+
+        final double lineYPos = ((Text) node.item).getY();
+
+        while (node.item != null && ((Text) node.item).getY() == lineYPos) {
+            if (((Text) node.item).getX() + ((Text) node.item).getLayoutBounds().getWidth()/2 >= mousePressedX) {
+                keyEventHandler.moveCursor(node.previous);
+                return;
+            }
+            node = node.next;
+        }
+
+        keyEventHandler.moveCursor(node.previous);
     }
 
     public Node searchVertical(double mousePressedY) {
         ArrayList<NewLinePosition> linePositions = textBuffer.getLinePositions();
 
-        NewLinePosition closestLinePos = linePositions.get(0);
-        double distance = closestLinePos.getPositionOfTopLeftCorner() - mousePressedY;
-
-        for(NewLinePosition newLinePosition : linePositions) {
-            double newdistance = newLinePosition.getPositionOfTopLeftCorner() - mousePressedY;
-            
+        if (mousePressedY < linePositions.get(0).getPositionOfTopLeftCorner()) {
+            return linePositions.get(0).getFirstNodeInLine();
+        } else if (mousePressedY > linePositions.get(linePositions.size() - 1).getPositionOfTopLeftCorner()) {
+            return linePositions.get(linePositions.size() - 1).getFirstNodeInLine();
         }
+
+        for(int i = 0; i < linePositions.size() - 2; i++) {
+            NewLinePosition newLinePosition = linePositions.get(i);
+            NewLinePosition nextNewLinePosition = linePositions.get(i + 1);
+            double lowerBound = newLinePosition.getPositionOfTopLeftCorner();
+            double upperBound = nextNewLinePosition.getPositionOfTopLeftCorner();
+            if (lowerBound <= mousePressedY || mousePressedY < upperBound) {
+                return newLinePosition.getFirstNodeInLine();
+            }
+        }
+        throw new RuntimeException("search vertical returns an unexpected value");
     }
 }

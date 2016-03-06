@@ -55,6 +55,10 @@ public class Cursor {
         return (int)renderPosX + ", " + (int)renderPosY;
     }
 
+    public void moveTo(Node n) {
+        node = n;
+    }
+
     //called by the EventHandler so that the cursor will insert where it is at. Might need to overload for copy and paste
     public void insert(String s) {
         //must insert and update current node
