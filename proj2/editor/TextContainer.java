@@ -73,7 +73,6 @@ public class TextContainer {
 
         //initialize new lineposition tracker to keep track of where the start of every line is
         linePositions = new ArrayList<>();
-        linePositions.add(new NewLinePosition(renderingPosY, node));
 
         while(node.next.item != null) {
             //remember to update node and text together

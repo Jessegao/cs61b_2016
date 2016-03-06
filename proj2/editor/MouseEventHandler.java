@@ -70,7 +70,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
             NewLinePosition nextNewLinePosition = linePositions.get(i + 1);
             double lowerBound = newLinePosition.getPositionOfTopLeftCorner();
             double upperBound = nextNewLinePosition.getPositionOfTopLeftCorner();
-            if (lowerBound <= mousePressedY || mousePressedY < upperBound) {
+            if (lowerBound <= mousePressedY && mousePressedY < upperBound) {
                 return newLinePosition.getFirstNodeInLine();
             }
         }
