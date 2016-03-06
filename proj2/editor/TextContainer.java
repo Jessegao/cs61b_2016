@@ -15,7 +15,7 @@ public class TextContainer {
     private LinkedListDeque<Text> container;
 
     //stores the beginning of each line. renewed every time render is called
-    private ArrayList<NewLinePosition> linePositions;
+    private ArrayList<NewLinePosition> linePositions = new ArrayList<NewLinePosition>();
 
     private static final int MARGIN = 5;
 
@@ -71,8 +71,8 @@ public class TextContainer {
         double renderingPosY = 0.0;
         Node node = getFirst();
 
-        //initialize new lineposition tracker to keep track of where the start of every line is
-        linePositions = new ArrayList<>();
+        //refreshes list every render
+        linePositions.clear();
 
         while(node.next.item != null) {
             //remember to update node and text together

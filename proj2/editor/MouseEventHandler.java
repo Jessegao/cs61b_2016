@@ -65,7 +65,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
             return linePositions.get(linePositions.size() - 1).getFirstNodeInLine();
         }
 
-        for(int i = 0; i < linePositions.size() - 2; i++) {
+        for(int i = 0; i < linePositions.size() - 1; i++) {
             NewLinePosition newLinePosition = linePositions.get(i);
             NewLinePosition nextNewLinePosition = linePositions.get(i + 1);
             double lowerBound = newLinePosition.getPositionOfTopLeftCorner();
