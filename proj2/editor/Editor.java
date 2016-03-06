@@ -52,6 +52,11 @@ public class Editor extends Application {
         scene.setOnKeyTyped(keyEventHandler);
         scene.setOnKeyPressed(keyEventHandler);
 
+        MouseEventHandler mouseEventHandler = new MouseEventHandler(cursor, textBuffer, keyEventHandler);
+        scene.setOnMousePressed(mouseEventHandler);
+        scene.setOnMouseDragged(mouseEventHandler);
+        scene.setOnMouseReleased(mouseEventHandler);
+
         resizeHandler = new ResizeHandler(scene, (KeyEventHandler) keyEventHandler, scroller);
 
         primaryStage.setTitle("Editor");

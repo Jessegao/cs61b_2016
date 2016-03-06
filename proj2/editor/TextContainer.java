@@ -5,20 +5,24 @@ import javafx.scene.Group;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+
 /**
  * Created by jesse on 2/25/16.
  * This class will contain all the text and calculate where to display stuff
  */
 public class TextContainer {
     private LinkedListDeque<Text> container;
-    //stores the beginning and end of each line. renewed every time render is called
-    private LinkedListDeque<NewLinePosition> linePositions;
+
+    //stores the beginning of each line. renewed every time render is called
+    private ArrayList<NewLinePosition> linePositions;
 
     private static final int MARGIN = 5;
+
     private int leftMargin = MARGIN;
     private int rightMargin;
-
     private Group root;
+
     private Font font;
     private ScrollBarHandler scrollBarHandler;
     public TextContainer(Group root, ScrollBarHandler scroller) {
@@ -26,6 +30,10 @@ public class TextContainer {
         container = new LinkedListDeque<Text>();
         scrollBarHandler = scroller;
         rightMargin = (int) scroller.getScrollBar().getLayoutBounds().getWidth() + leftMargin;
+    }
+
+    public ArrayList<NewLinePosition> getLinePositions() {
+        return linePositions;
     }
 
     public int getRightMargin() {
@@ -64,8 +72,8 @@ public class TextContainer {
         Node node = getFirst();
 
         //initialize new lineposition tracker to keep track of where the start of every line is
-        linePositions = new LinkedListDeque<NewLinePosition>();
-        linePositions.addLast(new NewLinePosition(renderingPosY, node));
+        linePositions = new ArrayList<>();
+        linePositions.add(new NewLinePosition(renderingPosY, node));
 
         while(node.next.item != null) {
             //remember to update node and text together
@@ -82,13 +90,9 @@ public class TextContainer {
                     //creates new line
                     renderingPosX = leftMargin;
                     renderingPosY += t.getLayoutBounds().getHeight();
-                    //adds new element to linePositions
-                    linePositions.addLast(new NewLinePosition(renderingPosY, node));
                 } else {
                     renderingPosX = leftMargin;
                     renderingPosY += t.getLayoutBounds().getHeight();
-                    //adds new element to linePositions
-                    linePositions.addLast(new NewLinePosition(renderingPosY, node));
                 }
 
             } else if(t.getText().equals("\r") || t.getText().equals("\n")) {
@@ -97,6 +101,12 @@ public class TextContainer {
                 //check here if spacing becomes weird
                 renderingPosY += t.getLayoutBounds().getHeight()/2;
             }
+
+            //adds beginning positions
+            if (renderingPosX == leftMargin) {
+                linePositions.add(new NewLinePosition(renderingPosY, node));
+            }
+
             //rounding the positions
             renderingPosX = Math.round(renderingPosX);
             renderingPosY = Math.round(renderingPosY);
