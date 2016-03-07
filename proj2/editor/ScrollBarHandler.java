@@ -16,7 +16,12 @@ public class ScrollBarHandler {
     private Group root;
     private Group textRoot;
     private int windowHeight;
-    private int textHeight;
+
+    public double getChange() {
+        return change;
+    }
+
+    private double change;
 
     public ScrollBar getScrollBar() {
         return scrollBar;
@@ -33,6 +38,16 @@ public class ScrollBarHandler {
 
     public void updateMax() {
         scrollBar.setMax(Math.max(0, (int) textRoot.getLayoutBounds().getHeight() - windowHeight));
+    }
+
+    public void snapCursor(Cursor cursor) {
+        double pixelsBeyondBoundaries;
+        if (cursor.getRenderPosY() - change > windowHeight) {
+            pixelsBeyondBoundaries = cursor.getRenderPosYBottom() - change - windowHeight;
+        } else {
+            pixelsBeyondBoundaries = (cursor.getRenderPosY() - change);
+        }
+        scrollBar.setValue(change + pixelsBeyondBoundaries);
     }
 
     public ScrollBarHandler(Group root, Group textRoot, int WINDOW_WIDTH, int WINDOW_HEIGHT) {
@@ -62,6 +77,7 @@ public class ScrollBarHandler {
                 // the scroll area, the position will be:
                 //      scroll minimum + (scroll maximum - scroll minimum) / 2
                 updateMax();
+                change = newValue.doubleValue();
                 textRoot.setLayoutY(Math.round(-newValue.doubleValue()));
             }
         });

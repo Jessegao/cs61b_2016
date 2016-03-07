@@ -21,17 +21,18 @@ public class Cursor {
     //Node right before the cursor
     private Node<Text> node;
     private double renderPosX;
+
     private double renderPosY;
+
     private double leftMargin;
     private double rightMargin;
     private Rectangle cursor;
-
     //keeps track of what the last action was for ambiguous line placement
     private boolean shouldStayOnLine = false;
 
     private final static double CURSORWIDTH = 1.0;
-    private static final int STARTING_FONT_SIZE = 12;
 
+    private static final int STARTING_FONT_SIZE = 12;
     private Group root;
     private TextContainer container;
 
@@ -49,6 +50,14 @@ public class Cursor {
 
     public int getListPosition(){
         return listPosition;
+    }
+
+    public double getRenderPosY() {
+        return renderPosY;
+    }
+
+    public double getRenderPosYBottom() {
+        return renderPosY + cursor.getHeight();
     }
 
     public String getPosition() {

@@ -14,11 +14,13 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
     Cursor cursor;
     TextContainer textBuffer;
     KeyEventHandler keyEventHandler;
+    ScrollBarHandler scrollBarHandler;
 
-    public MouseEventHandler(Cursor cursor, TextContainer textBuffer, EventHandler keyEventHandler) {
+    public MouseEventHandler(Cursor cursor, TextContainer textBuffer, EventHandler keyEventHandler, ScrollBarHandler scrollBarHandler) {
         this.cursor = cursor;
         this.textBuffer = textBuffer;
         this.keyEventHandler = (KeyEventHandler) keyEventHandler;
+        this.scrollBarHandler = scrollBarHandler;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
 
     public void adjustCursor(double mousePressedX, double mousePressedY) {
         //need to check that everything is still on the same line before searching for closest
-        Node node = searchVertical(mousePressedY);
+        Node node = searchVertical(mousePressedY + scrollBarHandler.getChange());
 
         if (node.item == null) {
             return;

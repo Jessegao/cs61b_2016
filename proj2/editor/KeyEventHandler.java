@@ -17,6 +17,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
     private TextContainer textBuffer;
     private Cursor cursor;
     FileManager fileManager;
+    ScrollBarHandler scrollBarHandler;
+    MouseEventHandler mouseEventHandler;
 
     private int windowWidth;
     private int windowHeight;
@@ -29,7 +31,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
     //remember to call render after every change made
 
-    public KeyEventHandler(int windowWidth, int windowHeight, TextContainer t, Cursor c, FileManager f) {
+    public KeyEventHandler(int windowWidth, int windowHeight, TextContainer t, Cursor c, FileManager f, ScrollBarHandler s) {
         textBuffer = t;
         textBuffer.setFont(Font.font(fontName, fontSize));
         textBuffer.render(windowWidth, windowHeight);
@@ -38,6 +40,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         cursor.firstRender();
         cursor.blink();
         fileManager = f;
+        scrollBarHandler = s;
 
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
@@ -68,6 +71,10 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             // the KEY_TYPED event, javafx handles the "Shift" key and associated
             // capitalization.
             String characterTyped = keyEvent.getCharacter();
+            // Makes the scrollbar snap to where the cursor can be seen during typing
+            if (cursor.getRenderPosYBottom() - scrollBarHandler.getChange() > windowHeight || cursor.getRenderPosY() - scrollBarHandler.getChange() < 0) {
+                scrollBarHandler.snapCursor(cursor);
+            }
             if (characterTyped.length() > 0 && characterTyped.charAt(0) != 8) {
                 // Ignore control keys, which have non-zero length, as well as the backspace
                 // key, which is represented as a character of value = 8 on Windows.
@@ -102,7 +109,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 cursor.render(windowWidth, windowHeight);
             } else if(code == KeyCode.P && keyEvent.isShortcutDown()) {
                 System.out.println(cursor.getPosition());
-            } else if(code == KeyCode.UP && keyEvent.isShortcutDown()) {
+            } else if(code == KeyCode.S && keyEvent.isShortcutDown()) {
                 fileManager.save();
             }
         }

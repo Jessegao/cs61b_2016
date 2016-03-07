@@ -10,7 +10,6 @@ import javafx.scene.text.Text;
 public class FileManager {
 
     private String inputFilename;
-    private String outputFilename;
     private Cursor cursor;
     FileWriter writer;
     TextContainer textContainer;
@@ -19,7 +18,6 @@ public class FileManager {
         textContainer = t;
         cursor = c;
         inputFilename = args.get(0);
-        outputFilename = args.get(1);
         FileReader reader;
         BufferedReader bufferedReader;
 
@@ -27,8 +25,6 @@ public class FileManager {
             File inputFile = new File(inputFilename);
             // Check to make sure that the input file exists!
             if (!inputFile.exists()) {
-                System.out.println("Unable to open file, " + inputFilename
-                        + " does not exist");
                 return;
             }
             reader = new FileReader(inputFile);
@@ -37,33 +33,40 @@ public class FileManager {
             int intRead = -1;
             // Keep reading from the file input read() returns -1, which means the end of the file
             // was reached.
-            while ((intRead = bufferedReader.read()) != -1) {
+            while ((intRead = bufferedReader.read()) != intRead) {
                 // The integer read can be cast to a char, because we're assuming ASCII.
                 char charRead = (char) intRead;
                 cursor.insert(String.valueOf(charRead));
             }
-
+            //moves cursor to beginning of the file
+            cursor.moveTo(textContainer.getFirst());
             // Close the reader.
             bufferedReader.close();
         } catch (FileNotFoundException fileNotFoundException) {
             System.out.println("File not found! Exception was: " + fileNotFoundException);
+            System.exit(1);
         } catch (IOException ioException) {
-            System.out.println("Error when writing; exception was: " + ioException);
+            System.out.println("Error when reading file; exception was: " + ioException);
+            System.exit(1);
         }
     }
 
     public void save() {
         try {
-            // Create a FileWriter to write to outputFilename. FileWriter will overwrite any data
-            // already in outputFilename.
-            writer = new FileWriter(outputFilename);
+            System.out.println("printing");
+            File inputFile = new File(inputFilename);
+            if (!inputFile.exists()) {
+                inputFile.createNewFile();
+            }
+            writer = new FileWriter(inputFile);
             Node<Text> node = textContainer.getFirst().next;
             while (node.item != null) {
-                writer.write(node.item.getText());
+                writer.write(node.item.getText().charAt(0));
                 node = node.next;
             }
         } catch (IOException ioException) {
-            System.out.println("Error when writing; exception was: " + ioException);
+            System.out.println("Error when writing to file; exception was: " + ioException);
+            System.exit(1);
         }
     }
 

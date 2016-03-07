@@ -51,13 +51,13 @@ public class Editor extends Application {
         // EventHandler subclasses must override the "handle" function, which will be called
         // by javafx.
         EventHandler<KeyEvent> keyEventHandler =
-                new KeyEventHandler(WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor, fileManager);
+                new KeyEventHandler(WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor, fileManager, scroller);
         // Register the event handler to be called for all KEY_PRESSED and KEY_TYPED events.
         scene.setOnKeyTyped(keyEventHandler);
         scene.setOnKeyPressed(keyEventHandler);
 
 
-        MouseEventHandler mouseEventHandler = new MouseEventHandler(cursor, textBuffer, keyEventHandler);
+        MouseEventHandler mouseEventHandler = new MouseEventHandler(cursor, textBuffer, keyEventHandler, scroller);
         scene.setOnMousePressed(mouseEventHandler);
         scene.setOnMouseDragged(mouseEventHandler);
         scene.setOnMouseReleased(mouseEventHandler);
@@ -72,8 +72,8 @@ public class Editor extends Application {
     }
 
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.out.println("Expected usage: editor.Editor <source filename> <destination filename>");
+        if (args.length < 1) {
+            System.out.println("Expected usage: editor.Editor <filename>");
             System.exit(1);
         }
 
