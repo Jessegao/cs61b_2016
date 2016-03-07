@@ -53,6 +53,12 @@ public class TextContainer {
         return container.getFirst();
     }
 
+    public void insertNodeAtNode(Node<Text> insert, Node insertionPoint) {
+        container.insertNodeAtNode(insert, insertionPoint);
+        root.getChildren().add(insert.item);
+        insert.item.toFront();
+    }
+
     public void insert(String s, Node n) {
         Text t = new Text(s);
         t.setFont(font);

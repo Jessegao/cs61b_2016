@@ -88,18 +88,27 @@ public class Cursor {
         shouldStayOnLine = false;
     }
 
-    public void remove() {
+    public void insert(Node n) {
+        container.insertNodeAtNode(n, node);
+        node = node.next;
+        listPosition++;
+        shouldStayOnLine = false;
+    }
+
+    public Node remove() {
         listPosition--;
         if (listPosition >= 0) {
             //decides if the cursor should stay on the same line
             if(((Text) node.previous.getItem()) != null && ((Text) node.getItem()).getX() == leftMargin && ((Text) node.previous.getItem()).getText().equals(" ")) {
                 shouldStayOnLine = true;
             }
-            Node oldnode = node;
+            Node<Text> oldnode = node;
             node = node.previous;
             container.remove(oldnode);
+            return oldnode;
         } else {
             listPosition = 0;
+            return null;
         }
     }
 

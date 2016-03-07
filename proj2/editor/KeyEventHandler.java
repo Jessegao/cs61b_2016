@@ -90,7 +90,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         }
         Action action = undoStack.pop();
         if (action.getTypeOfAction().equals("insert")) {
-            cursor.moveTo(action.getActionPosition());
+            cursor.moveTo(action.getContent());
             cursor.remove();
         } else {
             cursor.moveTo(action.getActionPosition());
@@ -106,10 +106,10 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         }
         Action action = redoStack.pop();
         if (action.getTypeOfAction().equals("insert")) {
-            cursor.moveTo(action.getActionPosition());
-            cursor.insert(action.getContent());
+            textBuffer.insertNodeAtNode(action.getActionPosition(), action.getContent());
+            cursor.moveTo(action.getActionPosition().next);
         } else {
-            cursor.moveTo(action.getActionPosition());
+            cursor.moveTo(action.getContent());
             cursor.remove();
         }
         render();
@@ -130,13 +130,16 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             if (characterTyped.length() > 0 && characterTyped.charAt(0) != 8) {
                 // Ignore control keys, which have non-zero length, as well as the backspace
                 // key, which is represented as a character of value = 8 on Windows.
+                Node insertPosition = cursor.getNode();
                 cursor.insert(characterTyped);
-                stackUndo(new Action("insert", cursor.getNode(), characterTyped));
+                stackUndo(new Action("insert", insertPosition, cursor.getNode()));
                 render();
                 keyEvent.consume();
             } else if(characterTyped.charAt(0) == 8) {
-                cursor.remove();
-                stackUndo(new Action("remove", cursor.getNode(), characterTyped));
+                Node s = cursor.remove();
+                if (s != null) {
+                    stackUndo(new Action("remove", cursor.getNode(), s));
+                }
                 render();
                 keyEvent.consume();
             }

@@ -121,6 +121,16 @@ public class LinkedListDeque<Item> {
         }
     }
 
+    public void insertNodeAtNode(Node insert, Node insertionPoint) {
+        Node previous = insertionPoint;
+        Node next = insertionPoint.next;
+        previous.next = insert;
+        insert.previous = previous;
+        insert.next = next;
+        next.previous = insert;
+        size++;
+    }
+
     public void insertAtNode(Item item, Node node) {
         Node previous = node;
         Node next = node.next;

@@ -7,9 +7,9 @@ public class Action {
     private String typeOfAction;
 
     private Node position;
-    private String content;
+    private Node content;
 
-    public Action(String typeOfAction, Node position, String content) {
+    public Action(String typeOfAction, Node position, Node content) {
         this.typeOfAction = typeOfAction;
         this.position = position;
         this.content = content;
@@ -23,7 +23,7 @@ public class Action {
         return position;
     }
 
-    public String getContent() {
+    public Node getContent() {
         return content;
     }
 }
