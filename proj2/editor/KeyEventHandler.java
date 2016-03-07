@@ -170,8 +170,14 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 fileManager.save();
             } else if(code == KeyCode.DOWN) {
                 adjustCursor(cursor.getRenderPosX(), cursor.getRenderPosYBottom() + 1);
+                if (cursor.getRenderPosYBottom() - scrollBarHandler.getChange() > windowHeight || cursor.getRenderPosY() - scrollBarHandler.getChange() < 0) {
+                    scrollBarHandler.snapCursor(cursor);
+                }
             } else if(code == KeyCode.UP) {
                 adjustCursor(cursor.getRenderPosX(), cursor.getRenderPosY() - 1);
+                if (cursor.getRenderPosYBottom() - scrollBarHandler.getChange() > windowHeight || cursor.getRenderPosY() - scrollBarHandler.getChange() < 0) {
+                    scrollBarHandler.snapCursor(cursor);
+                }
             } else if(code == KeyCode.Z && keyEvent.isShortcutDown()) {
                 undo();
             } else if(code == KeyCode.Y && keyEvent.isShortcutDown()) {
@@ -184,7 +190,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
     public void adjustCursor(double x, double y) {
         //need to check that everything is still on the same line before searching for closest
-        Node node = searchVertical(y + scrollBarHandler.getChange());
+        Node node = searchVertical(y);
 
         if (node.item == null) {
             return;
