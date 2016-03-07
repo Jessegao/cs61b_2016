@@ -148,8 +148,7 @@ public class Cursor {
     public void setFont(Font f, int windowWidth, int windowHeight){
         Text t = new Text(" ");
         t.setFont(f);
-        root.getChildren().remove(cursor);
-        cursor = new Rectangle(CURSORWIDTH, t.getLayoutBounds().getHeight());
+        cursor.setHeight(t.getLayoutBounds().getHeight());
         render(windowWidth, windowHeight);
     }
 

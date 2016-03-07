@@ -106,8 +106,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         }
         Action action = redoStack.pop();
         if (action.getTypeOfAction().equals("insert")) {
-            textBuffer.insertNodeAtNode(action.getActionPosition(), action.getContent());
-            cursor.moveTo(action.getActionPosition().next);
+            cursor.moveTo(action.getActionPosition());
+            cursor.insert(action.getContent());
         } else {
             cursor.moveTo(action.getContent());
             cursor.remove();
