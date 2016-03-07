@@ -1,5 +1,5 @@
 package editor;
-import com.sun.javafx.scene.control.skin.LabeledText;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -10,7 +10,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import javafx.util.StringConverter;
+
 
 /**
  * Created by jesse on 2/29/16.
@@ -18,24 +18,25 @@ import javafx.util.StringConverter;
 public class Cursor {
     //position of the cursor among the characters in the textbuffer
     private int listPosition = 0;
+
     //Node right before the cursor
     private Node<Text> node;
-    private double renderPosX;
 
+    private double renderPosX;
     private double renderPosY;
 
     private double leftMargin;
+
     private double rightMargin;
     private Rectangle cursor;
     //keeps track of what the last action was for ambiguous line placement
     private boolean shouldStayOnLine = false;
-
     private final static double CURSORWIDTH = 1.0;
 
     private static final int STARTING_FONT_SIZE = 12;
+
     private Group root;
     private TextContainer container;
-
     public Cursor(Group root, TextContainer t){
         this.root = root;
         container = t;
@@ -43,13 +44,23 @@ public class Cursor {
         rightMargin = t.getRightMargin();
         renderPosX = leftMargin;
         renderPosY = 0;
-        cursor = new Rectangle(CURSORWIDTH, STARTING_FONT_SIZE);
+        Text text = new Text("t");
+        text.setFont(new Font(STARTING_FONT_SIZE));
+        cursor = new Rectangle(CURSORWIDTH, text.getLayoutBounds().getHeight());
         cursor.setX(renderPosX);
         node = container.getFirst();
     }
 
+    public Node<Text> getNode() {
+        return node;
+    }
+
     public int getListPosition(){
         return listPosition;
+    }
+
+    public double getRenderPosX() {
+        return renderPosX;
     }
 
     public double getRenderPosY() {
@@ -107,6 +118,13 @@ public class Cursor {
         } else {
             renderPosX = leftMargin;
             renderPosY = 0;
+        }
+        if (node.item != null) {
+            if (node.item.getText().equals("\n") || node.item.getText().equals("\r")) {
+                cursor.setHeight(node.item.getLayoutBounds().getHeight()/2);
+            } else {
+                cursor.setHeight(node.item.getLayoutBounds().getHeight());
+            }
         }
         cursor.setX(renderPosX);
         cursor.setY(renderPosY);

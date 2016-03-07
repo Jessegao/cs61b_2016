@@ -9,6 +9,10 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+
+import java.util.ArrayList;
+import java.util.Stack;
 
 /** An EventHandler to handle keys that get pressed. */
 public class KeyEventHandler implements EventHandler<KeyEvent> {
@@ -22,6 +26,10 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
     private int windowWidth;
     private int windowHeight;
+
+    //undo redo
+    private Stack<Action> undoStack;
+    private Stack<Action> redoStack;
 
     private static final int STARTING_FONT_SIZE = 12;
 
@@ -41,6 +49,9 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         cursor.blink();
         fileManager = f;
         scrollBarHandler = s;
+
+        undoStack = new Stack<Action>();
+        redoStack = new Stack<Action>();
 
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
@@ -64,6 +75,44 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         cursor.render(windowWidth, windowHeight);
     }
 
+    public void stackUndo(Action action) {
+        if (undoStack.size() >= 100) {
+            undoStack.removeElementAt(0);
+        }
+        undoStack.push(action);
+    }
+
+
+    public void undo() {
+        if(undoStack.empty()) {
+            return;
+        }
+        Action action = undoStack.pop();
+        if (action.getTypeOfAction().equals("insert")) {
+            cursor.moveTo(action.getActionPosition());
+            cursor.remove();
+        } else {
+            cursor.moveTo(action.getActionPosition());
+            cursor.insert(action.getContent());
+        }
+        redoStack.push(action);
+    }
+
+    public void redo() {
+        if(redoStack.empty()) {
+            return;
+        }
+        Action action = redoStack.pop();
+        if (action.getTypeOfAction().equals("insert")) {
+            cursor.moveTo(action.getActionPosition());
+            cursor.insert(action.getContent());
+        } else {
+            cursor.moveTo(action.getActionPosition());
+            cursor.remove();
+        }
+        undoStack.push(action);
+    }
+
     @Override
     public void handle(KeyEvent keyEvent) {
         if (keyEvent.getEventType() == KeyEvent.KEY_TYPED && !keyEvent.isShortcutDown()) {
@@ -79,9 +128,11 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 // Ignore control keys, which have non-zero length, as well as the backspace
                 // key, which is represented as a character of value = 8 on Windows.
                 cursor.insert(characterTyped);
+                stackUndo(new Action("insert", cursor.getNode(), characterTyped));
                 render();
                 keyEvent.consume();
             } else if(characterTyped.charAt(0) == 8) {
+                stackUndo(new Action("remove", cursor.getNode(), characterTyped));
                 cursor.remove();
                 render();
                 keyEvent.consume();
@@ -111,7 +162,59 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 System.out.println(cursor.getPosition());
             } else if(code == KeyCode.S && keyEvent.isShortcutDown()) {
                 fileManager.save();
+            } else if(code == KeyCode.DOWN) {
+                adjustCursor(cursor.getRenderPosX(), cursor.getRenderPosYBottom() + 1);
+            } else if(code == KeyCode.UP) {
+                adjustCursor(cursor.getRenderPosX(), cursor.getRenderPosY() - 1);
+            } else if(code == KeyCode.Z && keyEvent.isShortcutDown()) {
+                undo();
+            } else if(code == KeyCode.Y && keyEvent.isShortcutDown()) {
+                redo();
             }
         }
+    }
+
+
+
+    public void adjustCursor(double x, double y) {
+        //need to check that everything is still on the same line before searching for closest
+        Node node = searchVertical(y + scrollBarHandler.getChange());
+
+        if (node.item == null) {
+            return;
+        }
+
+        final double lineYPos = ((Text) node.item).getY();
+
+        while (node.item != null && ((Text) node.item).getY() == lineYPos) {
+            if (((Text) node.item).getX() + ((Text) node.item).getLayoutBounds().getWidth()/2 >= x) {
+                moveCursor(node.previous);
+                return;
+            }
+            node = node.next;
+        }
+
+        moveCursor(node.previous);
+    }
+
+    public Node searchVertical(double y) {
+        ArrayList<NewLinePosition> linePositions = textBuffer.getLinePositions();
+
+        if (y < linePositions.get(0).getPositionOfTopLeftCorner()) {
+            return linePositions.get(0).getFirstNodeInLine();
+        } else if (y > linePositions.get(linePositions.size() - 1).getPositionOfTopLeftCorner()) {
+            return linePositions.get(linePositions.size() - 1).getFirstNodeInLine();
+        }
+
+        for(int i = 0; i < linePositions.size() - 1; i++) {
+            NewLinePosition newLinePosition = linePositions.get(i);
+            NewLinePosition nextNewLinePosition = linePositions.get(i + 1);
+            double lowerBound = newLinePosition.getPositionOfTopLeftCorner();
+            double upperBound = nextNewLinePosition.getPositionOfTopLeftCorner();
+            if (lowerBound <= y && y < upperBound) {
+                return newLinePosition.getFirstNodeInLine();
+            }
+        }
+        throw new RuntimeException("search vertical returns an unexpected value");
     }
 }

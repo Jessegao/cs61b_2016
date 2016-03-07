@@ -17,16 +17,26 @@ public class Editor extends Application {
     private static final int WINDOW_HEIGHT = 500;
 
     private int windowWidth = WINDOW_WIDTH;
+
     private int windowHeight = WINDOW_HEIGHT;
 
     private Cursor cursor;
     private TextContainer textBuffer;
+
     private Group root;
     private Group textRoot;
     private ScrollBarHandler scroller;
     private Scene scene;
     private ResizeHandler resizeHandler;
     private FileManager fileManager;
+
+    public int getWindowHeight() {
+        return windowHeight;
+    }
+
+    public int getWindowWidth() {
+        return windowWidth;
+    }
 
     @Override
     public void start(Stage primaryStage) {
@@ -46,7 +56,7 @@ public class Editor extends Application {
         // New file manager
         Parameters parameters = getParameters();
         List<String> args = parameters.getRaw();
-        fileManager = new FileManager(args, cursor, textBuffer);
+        fileManager = new FileManager(args, cursor, textBuffer, this);
         // To get information about what keys the user is pressing, create an EventHandler.
         // EventHandler subclasses must override the "handle" function, which will be called
         // by javafx.
@@ -76,7 +86,6 @@ public class Editor extends Application {
             System.out.println("Expected usage: editor.Editor <filename>");
             System.exit(1);
         }
-
         launch(args);
     }
 }
