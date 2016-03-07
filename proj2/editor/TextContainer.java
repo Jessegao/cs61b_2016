@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class TextContainer {
     private LinkedListDeque<Text> container;
 
-    //stores the beginning of each line. renewed every time render is called
+    //stores the beginning of each line. cleared every time render is called
     private ArrayList<NewLinePosition> linePositions = new ArrayList<NewLinePosition>();
 
     private static final int MARGIN = 5;
