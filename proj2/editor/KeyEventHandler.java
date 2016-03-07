@@ -80,6 +80,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             undoStack.removeElementAt(0);
         }
         undoStack.push(action);
+        redoStack.clear();
     }
 
 
@@ -95,6 +96,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             cursor.moveTo(action.getActionPosition());
             cursor.insert(action.getContent());
         }
+        render();
         redoStack.push(action);
     }
 
@@ -110,6 +112,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
             cursor.moveTo(action.getActionPosition());
             cursor.remove();
         }
+        render();
         undoStack.push(action);
     }
 
@@ -132,8 +135,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 render();
                 keyEvent.consume();
             } else if(characterTyped.charAt(0) == 8) {
-                stackUndo(new Action("remove", cursor.getNode(), characterTyped));
                 cursor.remove();
+                stackUndo(new Action("remove", cursor.getNode(), characterTyped));
                 render();
                 keyEvent.consume();
             }
