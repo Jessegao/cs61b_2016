@@ -5,20 +5,18 @@
  */
 package editor;
 import javafx.event.EventHandler;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
+
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 /** An EventHandler to handle keys that get pressed. */
 public class KeyEventHandler implements EventHandler<KeyEvent> {
 
-    private int cursorPosition;
     /** The Text to display on the screen. */
     private TextContainer textBuffer;
     private Cursor cursor;
+    FileManager fileManager;
 
     private int windowWidth;
     private int windowHeight;
@@ -31,7 +29,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
     //remember to call render after every change made
 
-    public KeyEventHandler(int windowWidth, int windowHeight, TextContainer t, Cursor c) {
+    public KeyEventHandler(int windowWidth, int windowHeight, TextContainer t, Cursor c, FileManager f) {
         textBuffer = t;
         textBuffer.setFont(Font.font(fontName, fontSize));
         textBuffer.render(windowWidth, windowHeight);
@@ -39,6 +37,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         //make cursor appear and blink
         cursor.firstRender();
         cursor.blink();
+        fileManager = f;
 
         this.windowWidth = windowWidth;
         this.windowHeight = windowHeight;
@@ -103,6 +102,8 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
                 cursor.render(windowWidth, windowHeight);
             } else if(code == KeyCode.P && keyEvent.isShortcutDown()) {
                 System.out.println(cursor.getPosition());
+            } else if(code == KeyCode.UP && keyEvent.isShortcutDown()) {
+                fileManager.save();
             }
         }
     }

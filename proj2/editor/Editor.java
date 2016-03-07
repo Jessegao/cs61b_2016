@@ -1,14 +1,13 @@
 package editor;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.ScrollBar;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 /**
  * Handles the GUI
@@ -27,6 +26,7 @@ public class Editor extends Application {
     private ScrollBarHandler scroller;
     private Scene scene;
     private ResizeHandler resizeHandler;
+    private FileManager fileManager;
 
     @Override
     public void start(Stage primaryStage) {
@@ -43,14 +43,19 @@ public class Editor extends Application {
         //initializes the cursor and textcontainer for the handlers to use
         textBuffer = new TextContainer(textRoot, scroller);
         cursor = new Cursor(textRoot, textBuffer);
+        // New file manager
+        Parameters parameters = getParameters();
+        List<String> args = parameters.getRaw();
+        fileManager = new FileManager(args, cursor, textBuffer);
         // To get information about what keys the user is pressing, create an EventHandler.
         // EventHandler subclasses must override the "handle" function, which will be called
         // by javafx.
         EventHandler<KeyEvent> keyEventHandler =
-                new KeyEventHandler(WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor);
+                new KeyEventHandler(WINDOW_WIDTH, WINDOW_HEIGHT, textBuffer, cursor, fileManager);
         // Register the event handler to be called for all KEY_PRESSED and KEY_TYPED events.
         scene.setOnKeyTyped(keyEventHandler);
         scene.setOnKeyPressed(keyEventHandler);
+
 
         MouseEventHandler mouseEventHandler = new MouseEventHandler(cursor, textBuffer, keyEventHandler);
         scene.setOnMousePressed(mouseEventHandler);
@@ -67,6 +72,11 @@ public class Editor extends Application {
     }
 
     public static void main(String[] args) {
+        if (args.length < 2) {
+            System.out.println("Expected usage: editor.Editor <source filename> <destination filename>");
+            System.exit(1);
+        }
+
         launch(args);
     }
 }
