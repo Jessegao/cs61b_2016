@@ -148,6 +148,11 @@ public class TextContainer {
 
     public void setFont(Font font) {
         this.font = font;
+        Node<Text> node = getFirst();
+        while(node.next.item != null) {
+            node = node.next;
+            node.item.setFont(font);
+        }
     }
 }
 
