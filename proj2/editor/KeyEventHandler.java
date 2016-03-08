@@ -199,7 +199,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
         final double lineYPos = ((Text) node.item).getY();
 
         while (node.item != null && ((Text) node.item).getY() == lineYPos) {
-            if (((Text) node.item).getX() + ((Text) node.item).getLayoutBounds().getWidth()/2 >= x) {
+            if (node.previous.item != null && ((Text) node.item).getX() + ((Text) node.item).getLayoutBounds().getWidth()/2 >= x) {
                 if (((Text) node.previous.getItem()).getY() != lineYPos) {
                     cursor.setRenderPosY(node.item.getY());
                     cursor.setShouldStayOnLine(true);

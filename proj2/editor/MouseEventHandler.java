@@ -49,7 +49,7 @@ public class MouseEventHandler implements EventHandler<MouseEvent> {
 
         while (node.item != null && ((Text) node.item).getY() == lineYPos) {
             if (((Text) node.item).getX() + ((Text) node.item).getLayoutBounds().getWidth()/2 >= mousePressedX) {
-                if (((Text) node.previous.getItem()).getY() != lineYPos) {
+                if (node.previous.item != null && ((Text) node.previous.getItem()).getY() != lineYPos) {
                     cursor.setRenderPosY(node.item.getY());
                     cursor.setShouldStayOnLine(true);
                 }
