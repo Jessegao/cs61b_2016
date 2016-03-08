@@ -190,7 +190,7 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
     public void adjustCursor(double x, double y) {
         //need to check that everything is still on the same line before searching for closest
-        Node node = searchVertical(y);
+        Node<Text> node = searchVertical(y);
 
         if (node.item == null) {
             return;
@@ -200,6 +200,10 @@ public class KeyEventHandler implements EventHandler<KeyEvent> {
 
         while (node.item != null && ((Text) node.item).getY() == lineYPos) {
             if (((Text) node.item).getX() + ((Text) node.item).getLayoutBounds().getWidth()/2 >= x) {
+                if (((Text) node.previous.getItem()).getY() != lineYPos) {
+                    cursor.setRenderPosY(node.item.getY());
+                    cursor.setShouldStayOnLine(true);
+                }
                 moveCursor(node.previous);
                 return;
             }

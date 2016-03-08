@@ -79,6 +79,14 @@ public class Cursor {
         node = n;
     }
 
+    public void setShouldStayOnLine(boolean tf) {
+        shouldStayOnLine = tf;
+    }
+
+    public void setRenderPosY(double posY) {
+        renderPosY = posY;
+    }
+
     //called by the EventHandler so that the cursor will insert where it is at. Might need to overload for copy and paste
     public void insert(String s) {
         //must insert and update current node
