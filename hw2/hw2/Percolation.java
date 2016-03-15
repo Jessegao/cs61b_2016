@@ -13,7 +13,7 @@ public class Percolation {
     private WeightedQuickUnionUF noBottomSet;
 
     public Percolation(int N) {
-        if (N < 0) {
+        if (N <= 0) {
             throw new java.lang.IllegalArgumentException();
         }
 
@@ -33,14 +33,18 @@ public class Percolation {
     public void open(int row, int col) {
         if (row == 0) {
             set.union(top, convertRowColToInt(row, col));
-            noBottomSet.union(top, convertRowColToInt(row, col)); // doesn't connect the bottom to the set
-        } else if (row == dimension - 1) {
+            noBottomSet.union(top, convertRowColToInt(row, col));
+            // doesn't connect the bottom to the set
+        }
+        if (row == dimension - 1) {
             set.union(bottom, convertRowColToInt(row, col));
         }
 
-        grid[row][col] = true;
-        connectSurrounding(row, col);
-        boxesOpen++;
+        if (!grid[row][col]) {
+            grid[row][col] = true;
+            connectSurrounding(row, col);
+            boxesOpen++;
+        }
     }
 
     public boolean isOpen(int row, int col) {
@@ -56,25 +60,33 @@ public class Percolation {
                 set.union(convertRowColToInt(row - 1, col), convertRowColToInt(row, col));
                 noBottomSet.union(convertRowColToInt(row - 1, col), convertRowColToInt(row, col));
             }
-        } catch (java.lang.IndexOutOfBoundsException e) {}
+        } catch (java.lang.IndexOutOfBoundsException e) {
+            row = row;
+        }
         try {
             if (isOpen(row + 1, col)) {
                 set.union(convertRowColToInt(row + 1, col), convertRowColToInt(row, col));
                 noBottomSet.union(convertRowColToInt(row + 1, col), convertRowColToInt(row, col));
             }
-        } catch (java.lang.IndexOutOfBoundsException e) {}
+        } catch (java.lang.IndexOutOfBoundsException e) {
+            row = row;
+        }
         try {
             if (isOpen(row, col - 1)) {
                 set.union(convertRowColToInt(row, col - 1), convertRowColToInt(row, col));
                 noBottomSet.union(convertRowColToInt(row, col - 1), convertRowColToInt(row, col));
             }
-        } catch (java.lang.IndexOutOfBoundsException e) {}
+        } catch (java.lang.IndexOutOfBoundsException e) {
+            row = row;
+        }
         try {
             if (isOpen(row, col + 1)) {
                 set.union(convertRowColToInt(row, col + 1), convertRowColToInt(row, col));
                 noBottomSet.union(convertRowColToInt(row, col + 1), convertRowColToInt(row, col));
             }
-        } catch (java.lang.IndexOutOfBoundsException e) {}
+        } catch (java.lang.IndexOutOfBoundsException e) {
+            row = row;
+        }
     }
 
     public boolean isFull(int row, int col) {
