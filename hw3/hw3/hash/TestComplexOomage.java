@@ -28,7 +28,17 @@ public class TestComplexOomage {
          * and ensure that no bucket has fewer than N / 50
          * Oomages and no bucket has more than N / 2.5 Oomages.
          */
-        return false;
+        int M = 10;
+        int[] buckets = new int[M];
+        for (ComplexOomage oomage: oomages) {
+            int position = (oomage.hashCode() & 0x7FFFFFFF) % M;
+            buckets[position]++;
+            if (buckets[position] < oomages.size() / 50 || buckets[position] > oomages.size() / 2.5) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 
@@ -50,7 +60,20 @@ public class TestComplexOomage {
          */
         HashSet<ComplexOomage> oomages = new HashSet<ComplexOomage>();
 
+        for (int j = 0; j < 50; j++) {
+            oomages.add(new ComplexOomage(generateDangerousParams()));
+        }
+
         assertTrue(haveNiceHashCodeSpread(oomages));
+    }
+
+    private List<Integer> generateDangerousParams() {
+        int N = StdRandom.uniform(1, 10);
+        ArrayList<Integer> params = new ArrayList<Integer>(N);
+        for (int i = 0; i < N; i++) {
+            params.add(StdRandom.uniform(0, 1) * 255);
+        }
+        return params;
     }
 
     /** Calls tests for SimpleOomage. */
