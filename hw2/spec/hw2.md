@@ -20,7 +20,7 @@ Introduction
 --------------------------------
 In this program, we'll write a program to estimate the value of the percolation threshold via [Monte Carlo simulation](https://en.wikipedia.org/wiki/Monte_Carlo_method).
 
-**Introductory Video.** I made an intro video for this assignment while I was at Princeton. You might find it useful: [Link](https://www.youtube.com/watch?v=o60oHXesOuA). The video doesn't quite match our assignment perfectly, but it's close. I'm hoping to put together and updated version for our course soon. 
+**Introductory Video.** An introductory video for this HW can be found at [this link](https://www.youtube.com/watch?v=kIYKCsvG6UI&list=PLNSdoiHk6ujjZs46s6XVXEbZUuF1MIO7g). It is broken into three parts: Intro, Implementation Spoilers, and Optimization Spoilers. Feel free to ignore these spoilers for a more difficult challenge. If you'd prefer to watch a two year old video I made when I was at Princeton, see [this link](https://www.youtube.com/watch?v=o60oHXesOuA).
 
 **HW2 Slides.** Slides for this HW can be found [here](https://docs.google.com/presentation/d/1AV5v-gTSIi5xUwtm-FtkReUmuTA3Mqry1eGjje7OgQo/edit?usp=sharing). Because this is a HW and not a project, I give spoilers for how to approach the HW. You may ignore them if you'd like a bigger challenge.
 
@@ -48,13 +48,13 @@ Percolation.java
        public boolean isFull(int row, int col)  // is the site (row, col) full?
        public int numberOfOpenSites()           // number of open sites
        public boolean percolates()              // does the system percolate?
-       public static void main(String[] args)   // unit testing (required)
+       public static void main(String[] args)   // unit testing (not required)
     }
 
 
-**Corner cases.**  By convention, the row and column indices are integers between 0 and N − 1, where `(0, 0)` is the upper-left site: Throw a java.lang.IndexOutOfBoundsException if any argument to `open()`, `isOpen()`, or `isFull()` is outside its prescribed range. The constructor should throw a `java.lang.IllegalArgumentException` if `N ≤ 0`.
+**Corner cases.**  By convention, the row and column indices are integers between 0 and N − 1, where (0, 0) is the upper-left site: Throw a java.lang.IndexOutOfBoundsException if any argument to `open()`, `isOpen()`, or `isFull()` is outside its prescribed range. The constructor should throw a `java.lang.IllegalArgumentException` if N ≤ 0.
 
-**Performance requirements.**  The constructor should take time proportional to $N^2$; all methods should take constant time plus a constant number of calls to the union-find methods `union()`, `find()`, `connected()`, and `count()`. Meeting these requirements is somewhat tricky! You might consider creating a solution that simply works, before figuring out a way to make it faster. For tips on meeting the speed requirements, see the video at the beginning of this spec.
+**Performance requirements.**  The constructor should take time proportional to $N^2$; all methods should take constant time plus a constant number of calls to the union-find methods `union()`, `find()`, `connected()`, and `count()`. Meeting these requirements is somewhat tricky! You might consider creating a solution that simply works, before figuring out a way to make it faster. For tips on meeting the speed requirements, see the video at the beginning of this spec. Your `numberOfOpenSites()` method must take constant time.
 
 PercolationStats.java
 --------------------------------
@@ -140,7 +140,11 @@ The program should behave as in this movie and the following snapshots when used
 Submission
 --------------------------------
 
-Submit a zip file containing Percolation.java (using the weighted quick-union algorithm from WeightedQuickUnionUF) and PercolationStats.java. You do not need to submit any other files.
+Submit a zip file containing just the folder for your hw2 package, similar to what you've done in previous labs, e.g. [lab 6](http://cs61b.ug/sp16/materials/lab/lab6/lab6.html). Your zip file must contain `hw2/Percolation.java` (using the weighted quick-union algorithm from `WeightedQuickUnionUF`) and `hw2/PercolationStats.java`. You do not need to submit any other files.
+
+For example:
+
+![submission](images/submission.png)
 
 FAQ
 --------------------------------
@@ -161,3 +165,23 @@ Pick a site at random (by using StdRandom or some other library to generate two 
 #### I don't get reliable timing information in PercolationStats when N = 200. What should I do? 
 
 Increase the size of N (say to 400, 800, and 1600), until the mean running time exceeds its standard deviation.
+
+#### I'm failing the Chi Squared test but passing everything else.
+
+The issue is that you're using the same random seed for multiple simulations, and the statistical test is catching the fact that they are the same. 
+ 
+If you look at the code for StdRandom, you'll see that it sets the seed just once (the first time StdRandom is used), which prevents this issue of seed reset. In short, don't set the seed yourself.
+
+Alternately, make sure you're not generating biased random numbers. You should be using the StdRandom method that generates integers, not doubles.
+
+#### It's telling me that my code reports "false" for percolates() but when I run the visualizer I'm getting true!
+
+The visualizer does a very specific sequence of isOpen/isFull/percolates() calls. Try creating your own test that only opens sites and then calls percolates(). Alternately, disable all isOpen and/or isFull calls in the visualizer so you can focus on the percolates() behavior. Alternately, pay close attention to the test labeled `Random Operation Order`.
+
+#### My code is compiling on my computer but not on the autograder.
+
+Your code must obey the API exactly. You may not add additional public methods or variables to the Percolation class. When we test your PercolationStats, we use a reference version of Percolation instead of your version to avoid cascading errors -- which means you can't assume that any additional public methods are available.
+
+Credits
+----------------
+This assignment originally developed by Kevin Wayne and Bob Sedgewick at Princeton University, with autograder built by Josh Hug for the Princeton Algorithms course.

@@ -1,5 +1,5 @@
-package lab8;
-import java.util.TreeMap;
+package lab9;
+import java.util.HashMap;
 import java.io.IOException;
 import java.util.Scanner;
 import edu.princeton.cs.algs4.Stopwatch;
@@ -30,12 +30,12 @@ public class InsertRandomSpeedTest {
             timeRandomMap61B(new ULLMap<String, Integer>(), 
                             waitForPositiveInt(input), L);
 
-            System.out.print("\nEnter # strings to insert into your BSTMap: ");
-            timeRandomMap61B(new BSTMap<String, Integer>(), 
+            System.out.print("\nEnter # strings to insert into your MyHashMap: ");
+            timeRandomMap61B(new MyHashMap<String, Integer>(), 
                             waitForPositiveInt(input), L);
 
-            System.out.print("\nEnter # strings to insert into Java's TreeMap: ");
-            timeRandomTreeMap(new TreeMap<String, Integer>(), 
+            System.out.print("\nEnter # strings to insert into Java's HashMap: ");
+            timeRandomHashMap(new HashMap<String, Integer>(), 
                             waitForPositiveInt(input), L);
 
             System.out.print("\nWould you like to try more timed-tests? (y/n)");
@@ -57,13 +57,13 @@ public class InsertRandomSpeedTest {
     }
 
     /** Returns time needed to put N random strings of length L into the
-      * TreeMap treeMap. */
-    public static double insertRandom(TreeMap<String, Integer> treeMap, int N, int L) {
+      * HashMap hashMap. */
+    public static double insertRandom(HashMap<String, Integer> hashMap, int N, int L) {
         Stopwatch sw = new Stopwatch();
         String s = "cat";
         for (int i = 0; i < N; i++) {
             s = StringUtils.randomString(L);
-            treeMap.put(s, new Integer(i));
+            hashMap.put(s, new Integer(i));
         }
         return sw.elapsedTime();
     }
@@ -85,14 +85,14 @@ public class InsertRandomSpeedTest {
     }
 
     /*
-        Attempts to insert N random strings of length L into a TreeMap
+        Attempts to insert N random strings of length L into a HashMap
         Prints time of the N insert calls, otherwise
         Prints a nice message about the error
     */
-    public static void timeRandomTreeMap(TreeMap<String, Integer> treeMap, int N, int L) {
+    public static void timeRandomHashMap(HashMap<String, Integer> hashMap, int N, int L) {
         try {
-            double javaTime = insertRandom(treeMap, N, L);
-            System.out.printf("Java's Built-in TreeMap: %.2f sec\n", javaTime);
+            double javaTime = insertRandom(hashMap, N, L);
+            System.out.printf("Java's Built-in HashMap: %.2f sec\n", javaTime);
         } catch (StackOverflowError e) { 
             printInfoOnStackOverflow(N, L); 
         } catch (RuntimeException e) { 
