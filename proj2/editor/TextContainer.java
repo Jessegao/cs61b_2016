@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 
 /**
- * Created by jesse on 2/25/16.
+ * Created by Jesse Gao on 2/25/16.
  * This class will contain all the text and calculate where to display stuff
  */
 public class TextContainer {

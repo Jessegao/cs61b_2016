@@ -17,7 +17,8 @@ public class HashTableVisualizer {
         HashTableDrawingUtility.setScale(scale);
         Set<Oomage> oomies = new HashSet<Oomage>();
         for (int i = 0; i < N; i += 1) {
-            oomies.add(SimpleOomage.randomSimpleOomage());
+            //oomies.add(SimpleOomage.randomSimpleOomage());
+            oomies.add(ComplexOomage.randomComplexOomage());
         }
         visualize(oomies, M, scale);
     }
@@ -31,6 +32,17 @@ public class HashTableVisualizer {
          */
 
         /* When done with visualizer, be sure to try 
-           scale = 0.5, N = 2000, M = 100. */           
+           scale = 0.5, N = 2000, M = 100. */
+
+        int[] table = new int[M];
+
+        HashTableDrawingUtility.setScale(scale);
+        HashTableDrawingUtility.drawLabels(M);
+
+        for (Oomage oomage : set) {
+            int position = (oomage.hashCode() & 0x7FFFFFFF) % M;
+            oomage.draw(HashTableDrawingUtility.xCoord(table[position]), HashTableDrawingUtility.yCoord(position, M), scale);
+            table[position]++;
+        }
     }
 } 

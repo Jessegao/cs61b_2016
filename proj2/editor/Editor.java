@@ -10,7 +10,7 @@ import javafx.stage.Stage;
 import java.util.List;
 
 /**
- * Handles the GUI
+ * Handles launch
  */
 public class Editor extends Application {
     private static final int WINDOW_WIDTH = 500;
