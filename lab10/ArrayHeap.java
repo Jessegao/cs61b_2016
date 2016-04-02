@@ -8,11 +8,16 @@ import java.util.ArrayList;
 public class ArrayHeap<T> {
 	private ArrayList<Node> contents = new ArrayList<Node>();
 
+    public ArrayHeap() {
+        contents.add(null);
+    }
+
 	/**
 	 * Inserts an item with the given priority value. This is enqueue, or offer.
 	 */
 	public void insert(T item, double priority) {
-
+        contents.add(new Node(item, priority));
+        bubbleUp(contents.size()-1);
 	}
 
 	/**
@@ -20,8 +25,7 @@ public class ArrayHeap<T> {
 	 * from the heap.
 	 */
 	public Node peek() {
-		// TODO Complete this method!
-		return null;
+		return getNode(1);
 	}
 
 	/**
@@ -29,8 +33,17 @@ public class ArrayHeap<T> {
 	 * the heap. This is dequeue, or poll.
 	 */
 	public Node removeMin() {
-		// TODO Complete this method!
-		return null;
+		Node root = peek();
+        if (contents.size() - 1 <= 0) {
+            return root;
+        }
+        swap(1, contents.size() - 1);
+        contents.remove(contents.size() - 1);
+        if (contents.size() - 1 <= 0) {
+            return root;
+        }
+        bubbleDown(1);
+        return root;
 	}
 
 	/**
@@ -103,7 +116,7 @@ public class ArrayHeap<T> {
 	 */
 	private int getLeftOf(int i) {
 		// TODO Complete this method!
-		return 0;
+		return 2 * i;
 	}
 
 	/**
@@ -111,7 +124,7 @@ public class ArrayHeap<T> {
 	 */
 	private int getRightOf(int i) {
 		// TODO Complete this method!
-		return 0;
+		return 2 * i + 1;
 	}
 
 	/**
@@ -119,7 +132,7 @@ public class ArrayHeap<T> {
 	 */
 	private int getParentOf(int i) {
 		// TODO Complete this method!
-		return 0;
+		return i / 2;
 	}
 
 	/**
@@ -127,13 +140,15 @@ public class ArrayHeap<T> {
 	 */
 	private void setLeft(int index, Node n) {
 		// TODO Complete this method!
+        setNode(getLeftOf(index), n);
 	}
 
 	/**
 	 * Adds the given node as the right child of the node at the given index.
 	 */
-	private void setRight(int inde, Node n) {
+	private void setRight(int index, Node n) {
 		// TODO Complete this method!
+        setNode(getRightOf(index), n);
 	}
 
 	/**
@@ -141,13 +156,26 @@ public class ArrayHeap<T> {
 	 */
 	private void bubbleUp(int index) {
 		// TODO Complete this method!
+        int parentIndex = getParentOf(index);
+        if (getNode(parentIndex) == null) {
+            return;
+        }
+        if (getNode(index).priority() < getNode(parentIndex).priority()) {
+            swap(index, parentIndex);
+            bubbleUp(parentIndex);
+        }
 	}
 
 	/**
 	 * Bubbles down the node currently at the given index.
 	 */
-	private void bubbleDown(int inex) {
+	private void bubbleDown(int index) {
 		// TODO Complete this method!
+        if (min(index, getLeftOf(index)) != index) {
+            int newIndex = min(getLeftOf(index), getRightOf(index));
+            swap(index, newIndex);
+            bubbleDown(newIndex);
+        }
 	}
 
 	/**
