@@ -23,4 +23,21 @@ public class Solver {
        }
     }*/
 
+    private Board[] board;
+    private int moves = 0;
+
+    public Solver(Board initial) {
+        board[0] = initial;
+        moves = findPath();
+    }
+
+    private int findPath() {
+        
+    }
+
+    public int moves() {
+
+    }
+
+    public Iterable<Board> solution()
 }
