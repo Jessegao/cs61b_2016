@@ -5,7 +5,12 @@ public class Board {
     private int[][] tiles;
 
     public Board(int[][] tiles) {
-        this.tiles = tiles.clone(); //immutability
+        this.tiles = new int[tiles.length][tiles.length];
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles[i].length; j++) {
+                this.tiles[i][j] = tiles[i][j];
+            }
+        }//immutability
     }
 
     /** Returns the string representation of the board.
@@ -61,21 +66,31 @@ public class Board {
 
     public boolean isGoal() {
         int counter = 1;
-        int[][] goal = new int[size()][size()];
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
-                if (counter != size() * size()) {
-                    goal[i][j] = counter;
+                if (counter != tileAt(i, j)) {
+                    return counter == size() * size();
                 }
+                counter++;
             }
         }
-        return this.equals(goal);
+        return true;
     }
+
     public boolean equals(Object y) {
         if (!(y instanceof Board)) {
             return false;
         }
 
-        return this.tiles.equals(((Board) y).tiles);
+        //return this.tiles.equals(((Board) y).tiles);
+        for (int i = 0; i < tiles.length; i++) {
+            for (int j = 0; j < tiles[i].length; j++) {
+                if (tiles[i][j] != ((Board) y).tileAt(i, j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
