@@ -10,7 +10,7 @@ public class Board {
             for (int j = 0; j < tiles[i].length; j++) {
                 this.tiles[i][j] = tiles[i][j];
             }
-        }//immutability
+        }
     }
 
     /** Returns the string representation of the board.
@@ -21,7 +21,7 @@ public class Board {
         s.append(N + "\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                s.append(String.format("%2d ", tileAt(i,j)));
+                s.append(String.format("%2d ", tileAt(i, j)));
             }
             s.append("\n");
         }
@@ -39,7 +39,7 @@ public class Board {
     public int hamming() {
         int correctNumberTracker = 1;
         int numbersOutOfPosition = 0;
-        for (int[] row : tiles) { // iterates through the numbers and checks that each is in its place
+        for (int[] row : tiles) {
             for (int i : row) {
                 if (i != correctNumberTracker) {
                     numbersOutOfPosition++;
@@ -53,7 +53,7 @@ public class Board {
 
     public int manhattan() {
         int outOfPlaceDistance = 0;
-        for (int i = 0; i < tiles.length; i++) { // iterates through the numbers and checks that each is in its place
+        for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
                 int n = tiles[i][j] - 1;
                 int differenceHeight = Math.abs((n / tiles.length) - i);
@@ -92,5 +92,9 @@ public class Board {
         }
 
         return true;
+    }
+
+    public int hashCode() {
+        return super.hashCode();
     }
 }

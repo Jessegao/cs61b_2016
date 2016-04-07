@@ -22,22 +22,34 @@ public class Solver {
         StdOut.println("Minimum number of moves = " + solver.moves());
         for (Board board : solver.solution()) {
             StdOut.println(board);
-       }
+        }
     }
 
-    private class SearchNode implements Comparable{
-        public Board board;
-        public int moves;
-        public SearchNode previous;
+    private class SearchNode implements Comparable {
+        public Board getBoard() {
+            return board;
+        }
 
-        public SearchNode(Board board, int moves, SearchNode previous) {
+        public int getMoves() {
+            return moves;
+        }
+
+        public SearchNode getPrevious() {
+            return previous;
+        }
+
+        private Board board;
+        private int moves;
+        private SearchNode previous;
+
+        SearchNode(Board board, int moves, SearchNode previous) {
             this.board = board;
             this.moves = moves;
             this.previous = previous;
         }
 
         public int compareTo(Object obj) {
-            if (! (obj instanceof SearchNode)) {
+            if (!(obj instanceof SearchNode)) {
                 throw new RuntimeException("bad compare");
             }
 
@@ -51,6 +63,7 @@ public class Solver {
     }
 
     private ArrayList<Board> boards;
+    private SearchNode lastBoard;
     private int numberMoves = 0;
     private MinPQ<SearchNode> minPQ;
 
@@ -58,26 +71,29 @@ public class Solver {
         boards = new ArrayList<Board>();
         minPQ = new MinPQ<SearchNode>();
         minPQ.insert(new SearchNode(initial, 0, null));
-        findPath();
+        while (lastBoard == null) {
+            findPath();
+        }
+        SearchNode tracker = lastBoard;
+        while (tracker != null) {
+            boards.add(0, tracker.board);
+            tracker = tracker.previous;
+        }
     }
 
     private void findPath() {
         SearchNode search = minPQ.delMin();
-        if (search.moves > boards.size() - 1) {
-            boards.add(search.moves, search.board);
-        } else {
-            boards.set(search.moves, search.board);
-        }
+
         if (search.board.isGoal()) {
             numberMoves = search.moves;
+            lastBoard = search;
             return;
         } else {
             for (Board b : BoardUtils.neighbors(search.board)) {
-                if (!b.equals(search.board)) {
+                if (search.previous == null || !b.equals(search.previous.board)) {
                     minPQ.insert(new SearchNode(b, search.moves + 1, search));
                 }
             }
-            findPath();
         }
     }
 
