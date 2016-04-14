@@ -20,6 +20,12 @@ import static spark.Spark.*;
  * @author Alan Yao
  */
 public class MapServer {
+
+    /**
+     * This is the QuadTree that handles stuff
+     */
+    private static QuadTree quadTree;
+
     /**
      * The root upper left/lower right longitudes and latitudes represent the bounding box of
      * the root tile, as the images in the img/ folder are scraped.
@@ -70,6 +76,7 @@ public class MapServer {
      **/
     public static void initialize() {
         g = new GraphDB(OSM_DB_PATH);
+        quadTree = new QuadTree(ROOT_ULLAT, ROOT_ULLON, ROOT_LRLAT, ROOT_LRLON);
     }
 
     public static void main(String[] args) {
@@ -203,6 +210,10 @@ public class MapServer {
      */
     public static Map<String, Object> getMapRaster(Map<String, Double> params, OutputStream os) {
         HashMap<String, Object> rasteredImageParams = new HashMap<>();
+        rasteredImageParams.put();
+        rasteredImageParams.put();
+        rasteredImageParams.put();
+        rasteredImageParams.put();
         return rasteredImageParams;
     }
 

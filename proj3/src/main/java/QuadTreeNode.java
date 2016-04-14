@@ -1,22 +1,40 @@
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 /**
  * Created by Jesse on 4/13/2016.
  */
 public class QuadTreeNode {
-    private BufferedImage tile;
+
+    // The deepest the tree can go
+    private static final int DEEPEST_DEPTH = 7;
+
+    private File tile;
     private QuadTreeNode upperRight;
     private QuadTreeNode upperLeft;
     private QuadTreeNode lowerRight;
     private QuadTreeNode lowerLeft;
-    //this will be the number that shows where the tile of this quadrant lies
-    private int referenceLevel;
 
-    public QuadTreeNode(int referenceLevel) {
-        this.referenceLevel = referenceLevel;
+    private int depth;
+    private double upperLeftLatitude;
+    private double upperLeftLongitude;
+    private double lowerRightLatitude;
+    private double lowerRightLongitude;
+
+    public QuadTreeNode(int depth, double upperLeftLatitude, double upperLeftLongitude, double lowerRightLatitude, double lowerRightLongitude, File file) {
+        this.depth = depth;
+        this.upperLeftLatitude = upperLeftLatitude;
+        this.upperLeftLongitude = upperLeftLongitude;
+        this.lowerRightLatitude = lowerRightLatitude;
+        this.lowerRightLongitude = lowerRightLongitude;
+        tile = file;
+
+        if (depth < DEEPEST_DEPTH) {
+            TODO instantiate upperRight ...
+        }
     }
 
-    public BufferedImage getTile() {
+    public File getTile() {
         return tile;
     }
 
@@ -38,6 +56,6 @@ public class QuadTreeNode {
 
     //returns a number corresponding to the proper image and its location
     private int getPictureNumber(int quadrant) {
-        return quadrant + 10 * referenceLevel;
+        return quadrant + 10 * depth;
     }
 }
