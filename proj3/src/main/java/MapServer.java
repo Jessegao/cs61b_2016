@@ -76,7 +76,7 @@ public class MapServer {
      **/
     public static void initialize() {
         g = new GraphDB(OSM_DB_PATH);
-        quadTree = new QuadTree(ROOT_ULLAT, ROOT_ULLON, ROOT_LRLAT, ROOT_LRLON);
+        quadTree = new QuadTree(ROOT_ULLAT, ROOT_ULLON, ROOT_LRLAT, ROOT_LRLON, 0);
     }
 
     public static void main(String[] args) {

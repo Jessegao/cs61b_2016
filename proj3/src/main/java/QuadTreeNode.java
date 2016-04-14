@@ -9,7 +9,7 @@ public class QuadTreeNode {
     // The deepest the tree can go
     private static final int DEEPEST_DEPTH = 7;
 
-    private File tile;
+    private int tile;
     private QuadTreeNode upperRight;
     private QuadTreeNode upperLeft;
     private QuadTreeNode lowerRight;
@@ -21,21 +21,32 @@ public class QuadTreeNode {
     private double lowerRightLatitude;
     private double lowerRightLongitude;
 
-    public QuadTreeNode(int depth, double upperLeftLatitude, double upperLeftLongitude, double lowerRightLatitude, double lowerRightLongitude, File file) {
+    public QuadTreeNode(int depth, double upperLeftLatitude, double upperLeftLongitude, double lowerRightLatitude, double lowerRightLongitude, int fileName) {
         this.depth = depth;
         this.upperLeftLatitude = upperLeftLatitude;
         this.upperLeftLongitude = upperLeftLongitude;
         this.lowerRightLatitude = lowerRightLatitude;
         this.lowerRightLongitude = lowerRightLongitude;
-        tile = file;
+        tile = fileName;
 
+        // Instantiate to the Deepest Depth
         if (depth < DEEPEST_DEPTH) {
-            TODO instantiate upperRight ...
+            upperLeft = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude, lowerRightLatitude / 2.0, lowerRightLongitude / 2.0, tile * 10 + 1);
+            upperRight = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude / 2.0, lowerRightLatitude / 2.0, lowerRightLongitude, tile * 10 + 2);
+            lowerLeft = new QuadTreeNode(depth + 1, upperLeftLatitude / 2.0, upperLeftLongitude, lowerRightLatitude, lowerRightLongitude / 2.0, tile * 10 + 3);;
+            lowerRight = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude / 2.0, lowerRightLatitude, lowerRightLongitude / 2.0, tile * 10 + 4);;
         }
     }
 
-    public File getTile() {
-        return tile;
+    public String toString() {
+        return ("depth = " + depth + "\n" + "upperleftLatitude = " + upperLeftLatitude + "depth = " + depth + "depth = " + depth)
+    }
+
+    public String getPictureName() {
+        if (tile == 0) {
+            return "root";
+        }
+        return String.valueOf(tile);
     }
 
     public QuadTreeNode getUpperRight() {
