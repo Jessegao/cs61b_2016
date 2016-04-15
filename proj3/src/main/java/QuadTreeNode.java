@@ -54,6 +54,10 @@ public class QuadTreeNode {
         return String.valueOf(tile);
     }
 
+    public double getLongitudinalDistPerPixel() {
+        return (lowerRightLongitude - upperLeftLongitude) / (MapServer.TILE_SIZE);
+    }
+
     public QuadTreeNode getUpperRight() {
         return upperRight;
     }

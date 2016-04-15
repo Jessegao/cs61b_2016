@@ -16,5 +16,8 @@ public class QuadTree {
         return root.toString();
     }
 
-    public TreeSet<String> 
+    public TreeSet<String> getRasterImages(Double top, Double left, Double bottom, Double right, Double width, Double height) {
+        TreeSet<String> imageNames = new TreeSet<String>();
+
+    }
 }

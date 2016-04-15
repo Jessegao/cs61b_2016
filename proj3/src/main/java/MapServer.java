@@ -1,12 +1,8 @@
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /* Maven is used to pull in these dependencies. */
 import com.google.gson.Gson;
@@ -208,10 +204,23 @@ public class MapServer {
      * "query_success" -> Boolean, whether an image was successfully rastered. <br>
      * @see #REQUIRED_RASTER_REQUEST_PARAMS
      */
+    /**
+     * Each raster request to the server will have the following parameters
+     * as keys in the params map accessible by,
+     * i.e., params.get("ullat") inside getMapRaster(). <br>
+     * ullat -> upper left corner latitude,<br> ullon -> upper left corner longitude, <br>
+     * lrlat -> lower right corner latitude,<br> lrlon -> lower right corner longitude <br>
+     * w -> user viewport window width in pixels,<br> h -> user viewport height in pixels.
+     **/
     public static Map<String, Object> getMapRaster(Map<String, Double> params, OutputStream os) {
         HashMap<String, Object> rasteredImageParams = new HashMap<>();
+        TreeSet<String> pictureNames = quadTree.getRasterImages(params.get("ullat"), params.get("ullon"),
+                params.get("lrlat"), params.get("lrlon"), params.get("w"), params.get("h"));
+
         return rasteredImageParams;
     }
+
+    private BufferedImage stitchImages()
 
     /**
      * Searches for the shortest route satisfying the input request parameters, sets it to be the
