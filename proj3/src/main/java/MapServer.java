@@ -220,7 +220,9 @@ public class MapServer {
         return rasteredImageParams;
     }
 
-    private BufferedImage stitchImages()
+    private BufferedImage stitchImages() {
+
+    }
 
     /**
      * Searches for the shortest route satisfying the input request parameters, sets it to be the

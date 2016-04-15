@@ -7,7 +7,7 @@ import java.io.File;
 public class QuadTreeNode {
 
     // The deepest the tree can go
-    private static final int DEEPEST_DEPTH = 7;
+    public static final int DEEPEST_DEPTH = 7;
 
     private int tile;
     private QuadTreeNode upperRight;
@@ -55,7 +55,11 @@ public class QuadTreeNode {
     }
 
     public double getLongitudinalDistPerPixel() {
-        return (lowerRightLongitude - upperLeftLongitude) / (MapServer.TILE_SIZE);
+        return Math.abs(lowerRightLongitude - upperLeftLongitude) / (MapServer.TILE_SIZE);
+    }
+
+    public Rectangle getRectangle() {
+        return new Rectangle(upperLeftLongitude, lowerRightLongitude, upperLeftLatitude, lowerRightLatitude);
     }
 
     public QuadTreeNode getUpperRight() {
@@ -73,6 +77,8 @@ public class QuadTreeNode {
     public QuadTreeNode getLowerLeft() {
         return lowerLeft;
     }
+
+    public int getDepth() { return depth; }
 
     //returns a number corresponding to the proper image and its location
     private int getPictureNumber(int quadrant) {
