@@ -31,15 +31,20 @@ public class QuadTreeNode {
 
         // Instantiate to the Deepest Depth
         if (depth < DEEPEST_DEPTH) {
-            upperLeft = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude, lowerRightLatitude / 2.0, lowerRightLongitude / 2.0, tile * 10 + 1);
-            upperRight = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude / 2.0, lowerRightLatitude / 2.0, lowerRightLongitude, tile * 10 + 2);
-            lowerLeft = new QuadTreeNode(depth + 1, upperLeftLatitude / 2.0, upperLeftLongitude, lowerRightLatitude, lowerRightLongitude / 2.0, tile * 10 + 3);;
-            lowerRight = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude / 2.0, lowerRightLatitude, lowerRightLongitude / 2.0, tile * 10 + 4);;
+            double halfLat = (upperLeftLatitude + lowerRightLatitude) / 2;
+            double halfLong = (upperLeftLongitude + lowerRightLongitude) / 2;
+            upperLeft = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude, halfLat, halfLong, tile * 10 + 1);
+            upperRight = new QuadTreeNode(depth + 1, upperLeftLatitude, halfLong, halfLat, lowerRightLongitude, tile * 10 + 2);
+            lowerLeft = new QuadTreeNode(depth + 1, halfLat, upperLeftLongitude, lowerRightLatitude, halfLong, tile * 10 + 3);;
+            lowerRight = new QuadTreeNode(depth + 1, halfLat, halfLong, lowerRightLatitude, lowerRightLongitude, tile * 10 + 4);;
         }
     }
 
     public String toString() {
-        return ("depth = " + depth + "\n" + "upperleftLatitude = " + upperLeftLatitude + "depth = " + depth + "depth = " + depth)
+        String children = "The children are:\n" + upperLeft + upperRight + lowerLeft + lowerRight + "\n";
+        return ("depth = " + depth + "\n" + "upperleftLatitude = " + upperLeftLatitude + "\n" + "upperLeftLongitude = " + upperLeftLongitude
+                + "\n" + "lowerRightLatitude = " + lowerRightLatitude + "\n" + "lowerRightLongitude = " + lowerRightLongitude  + "\n" + "tile = " + tile + "\n \n"
+                + children);
     }
 
     public String getPictureName() {
@@ -69,4 +74,5 @@ public class QuadTreeNode {
     private int getPictureNumber(int quadrant) {
         return quadrant + 10 * depth;
     }
+
 }

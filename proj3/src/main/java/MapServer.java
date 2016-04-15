@@ -210,10 +210,6 @@ public class MapServer {
      */
     public static Map<String, Object> getMapRaster(Map<String, Double> params, OutputStream os) {
         HashMap<String, Object> rasteredImageParams = new HashMap<>();
-        rasteredImageParams.put();
-        rasteredImageParams.put();
-        rasteredImageParams.put();
-        rasteredImageParams.put();
         return rasteredImageParams;
     }
 
