@@ -96,11 +96,6 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
 
     public int getDepth() { return depth; }
 
-    //returns a number corresponding to the proper image and its location
-    private int getPictureNumber(int quadrant) {
-        return quadrant + 10 * depth;
-    }
-
     public int compareTo(QuadTreeNode node) {
         if (upperLeftLatitude < node.getUpperLeftLatitude()) {
             return -1;

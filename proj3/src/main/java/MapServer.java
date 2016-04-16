@@ -252,12 +252,7 @@ public class MapServer {
         int row = numberOfTilesPerRow(tileNodes);
         int col = tileNodes.size() / row;
         BufferedImage bufferedImage = new BufferedImage(row * TILE_SIZE, col * TILE_SIZE, BufferedImage.TYPE_INT_RGB);
-        /**int counter = 0;
-        for(int i = 0; i < col; i++) {
-            for (int j = 0; j < row; j++) {
 
-            }
-        } */
         Graphics g = bufferedImage.getGraphics();
         int x = 0;
         int y = 0;
@@ -279,7 +274,9 @@ public class MapServer {
     }
 
     private static int numberOfTilesPerRow(ArrayList<QuadTreeNode> tileNodes) {
-        assert tileNodes.size() > 0;
+        if (tileNodes.size() == 0) {
+            throw new RuntimeException("The list of tiles is empty");
+        }
         int counter = 0;
         double latitude = tileNodes.get(0).getUpperLeftLatitude();
         for (QuadTreeNode node : tileNodes) {
