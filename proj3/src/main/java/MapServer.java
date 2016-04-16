@@ -1,11 +1,16 @@
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.List;
 
 /* Maven is used to pull in these dependencies. */
 import com.google.gson.Gson;
+
+import javax.imageio.ImageIO;
 
 import static spark.Spark.*;
 
@@ -214,14 +219,75 @@ public class MapServer {
      **/
     public static Map<String, Object> getMapRaster(Map<String, Double> params, OutputStream os) {
         HashMap<String, Object> rasteredImageParams = new HashMap<>();
-        TreeSet<String> pictureNames = quadTree.getRasterImages(params.get("ullat"), params.get("ullon"),
+
+        ArrayList<QuadTreeNode> tileNodes = quadTree.getRasterImages(params.get("ullat"), params.get("ullon"),
                 params.get("lrlat"), params.get("lrlon"), params.get("w"), params.get("h"));
 
+        BufferedImage bigImage = stitchImages(tileNodes);
+        try {
+            ImageIO.write(bigImage, "png", os);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        QuadTreeNode first = tileNodes.get(0);
+        QuadTreeNode last = tileNodes.get(tileNodes.size()-1);
+        rasteredImageParams.put("raster_ul_lon", first.getUpperLeftLongitude());
+        rasteredImageParams.put("raster_ul_lat", first.getUpperLeftLatitude());
+        rasteredImageParams.put("raster_lr_lon", last.getLowerRightLongitude());
+        rasteredImageParams.put("raster_lr_lat", last.getLowerRightLatitude());
+        rasteredImageParams.put("raster_width", bigImage.getWidth());
+        rasteredImageParams.put("raster_height", bigImage.getHeight());
+        rasteredImageParams.put("depth", first.getDepth());
+        rasteredImageParams.put("query_success", true);
         return rasteredImageParams;
     }
 
-    private BufferedImage stitchImages() {
+    private static String getProperFileName(QuadTreeNode node) {
+        return IMG_ROOT + node.getPictureName() + ".png";
+    }
 
+    private static BufferedImage stitchImages(ArrayList<QuadTreeNode> tileNodes) {
+        Collections.sort(tileNodes);
+        int row = numberOfTilesPerRow(tileNodes);
+        int col = tileNodes.size() / row;
+        BufferedImage bufferedImage = new BufferedImage(row * TILE_SIZE, col * TILE_SIZE, BufferedImage.TYPE_INT_RGB);
+        /**int counter = 0;
+        for(int i = 0; i < col; i++) {
+            for (int j = 0; j < row; j++) {
+
+            }
+        } */
+        Graphics g = bufferedImage.getGraphics();
+        int x = 0;
+        int y = 0;
+        for(QuadTreeNode node : tileNodes){
+            BufferedImage bi;
+            try {
+                bi = ImageIO.read(new File(getProperFileName(node)));
+            } catch (java.io.IOException exception) {
+                throw new RuntimeException("Aye you messed up. A file doesn't exist.");
+            }
+            g.drawImage(bi, x, y, null);
+            x += TILE_SIZE;
+            if(x > bufferedImage.getWidth()){
+                x = 0;
+                y += bi.getHeight();
+            }
+        }
+        return bufferedImage;
+    }
+
+    private static int numberOfTilesPerRow(ArrayList<QuadTreeNode> tileNodes) {
+        assert tileNodes.size() > 0;
+        int counter = 0;
+        double latitude = tileNodes.get(0).getUpperLeftLatitude();
+        for (QuadTreeNode node : tileNodes) {
+            if (node.getUpperLeftLatitude() == latitude) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     /**

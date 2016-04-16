@@ -4,7 +4,7 @@ import java.io.File;
 /**
  * Created by Jesse on 4/13/2016.
  */
-public class QuadTreeNode {
+public class QuadTreeNode implements Comparable<QuadTreeNode> {
 
     // The deepest the tree can go
     public static final int DEEPEST_DEPTH = 7;
@@ -14,6 +14,22 @@ public class QuadTreeNode {
     private QuadTreeNode upperLeft;
     private QuadTreeNode lowerRight;
     private QuadTreeNode lowerLeft;
+
+    public double getLowerRightLongitude() {
+        return lowerRightLongitude;
+    }
+
+    public double getUpperLeftLatitude() {
+        return upperLeftLatitude;
+    }
+
+    public double getUpperLeftLongitude() {
+        return upperLeftLongitude;
+    }
+
+    public double getLowerRightLatitude() {
+        return lowerRightLatitude;
+    }
 
     private int depth;
     private double upperLeftLatitude;
@@ -85,4 +101,17 @@ public class QuadTreeNode {
         return quadrant + 10 * depth;
     }
 
+    public int compareTo(QuadTreeNode node) {
+        if (upperLeftLatitude < node.getUpperLeftLatitude()) {
+            return -1;
+        } else if (upperLeftLatitude > node.getUpperLeftLatitude()) {
+            return 1;
+        } else if (upperLeftLongitude < node.getUpperLeftLongitude()) {
+            return -1;
+        } else if (upperLeftLongitude > node.getUpperLeftLongitude()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

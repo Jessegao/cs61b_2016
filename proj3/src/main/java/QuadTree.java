@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 /**
@@ -16,35 +17,35 @@ public class QuadTree {
         return root.toString();
     }
 
-    public TreeSet<String> getRasterImages(Double top, Double left, Double bottom, Double right, Double width, Double height) {
-        TreeSet<String> imageNames = new TreeSet<String>();
+    public ArrayList<QuadTreeNode> getRasterImages(Double top, Double left, Double bottom, Double right, Double width, Double height) {
+        ArrayList<QuadTreeNode> tileNodes = new ArrayList<>();
         Rectangle query = new Rectangle(left, right, top, bottom);
         double dpp = Math.abs(left - right) / width;
-        recursiveDestructiveCollect(imageNames, root, dpp, query);
-        return imageNames;
+        recursiveDestructiveCollect(tileNodes, root, dpp, query);
+        return tileNodes;
     }
 
-    /** Recursively gets all the tiles' names (no root/ or .png added yet) and puts them into imageNames */
-    private void recursiveDestructiveCollect(TreeSet<String> imageNames, QuadTreeNode node, double dpp, Rectangle query) {
+    /** Recursively gets all the tiles' names (no root/ or .png added yet) and puts them into tileNodes */
+    private void recursiveDestructiveCollect(ArrayList<QuadTreeNode> tileNodes, QuadTreeNode node, double dpp, Rectangle query) {
         if (isDeepEnough(node, dpp)) { // inefficient
-            imageNames.add(node.getPictureName());
+            tileNodes.add(node);
         } else {
             if (query.intersects(node.getUpperLeft().getRectangle())) {
-                recursiveDestructiveCollect(imageNames, node.getUpperLeft(), dpp, query);
+                recursiveDestructiveCollect(tileNodes, node.getUpperLeft(), dpp, query);
             }
             if (query.intersects(node.getUpperRight().getRectangle())) {
-                recursiveDestructiveCollect(imageNames, node.getUpperRight(), dpp, query);
+                recursiveDestructiveCollect(tileNodes, node.getUpperRight(), dpp, query);
             }
             if (query.intersects(node.getLowerLeft().getRectangle())) {
-                recursiveDestructiveCollect(imageNames, node.getLowerLeft(), dpp, query);
+                recursiveDestructiveCollect(tileNodes, node.getLowerLeft(), dpp, query);
             }
             if (query.intersects(node.getLowerRight().getRectangle())) {
-                recursiveDestructiveCollect(imageNames, node.getLowerRight(), dpp, query);
+                recursiveDestructiveCollect(tileNodes, node.getLowerRight(), dpp, query);
             }
         }
     }
 
     private boolean isDeepEnough(QuadTreeNode node, double dpp) {
-        return node.getLongitudinalDistPerPixel() >= dpp|| node.getDepth() == QuadTreeNode.DEEPEST_DEPTH;
+        return node.getLongitudinalDistPerPixel() <= dpp|| node.getDepth() == QuadTreeNode.DEEPEST_DEPTH;
     }
 }
