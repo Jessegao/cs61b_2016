@@ -51,8 +51,8 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
             double halfLong = (upperLeftLongitude + lowerRightLongitude) / 2;
             upperLeft = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude, halfLat, halfLong, tile * 10 + 1);
             upperRight = new QuadTreeNode(depth + 1, upperLeftLatitude, halfLong, halfLat, lowerRightLongitude, tile * 10 + 2);
-            lowerLeft = new QuadTreeNode(depth + 1, halfLat, upperLeftLongitude, lowerRightLatitude, halfLong, tile * 10 + 3);;
-            lowerRight = new QuadTreeNode(depth + 1, halfLat, halfLong, lowerRightLatitude, lowerRightLongitude, tile * 10 + 4);;
+            lowerLeft = new QuadTreeNode(depth + 1, halfLat, upperLeftLongitude, lowerRightLatitude, halfLong, tile * 10 + 3);
+            lowerRight = new QuadTreeNode(depth + 1, halfLat, halfLong, lowerRightLatitude, lowerRightLongitude, tile * 10 + 4);
         }
     }
 
@@ -98,9 +98,9 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
 
     public int compareTo(QuadTreeNode node) {
         if (upperLeftLatitude < node.getUpperLeftLatitude()) {
-            return -1;
-        } else if (upperLeftLatitude > node.getUpperLeftLatitude()) {
             return 1;
+        } else if (upperLeftLatitude > node.getUpperLeftLatitude()) {
+            return -1;
         } else if (upperLeftLongitude < node.getUpperLeftLongitude()) {
             return -1;
         } else if (upperLeftLongitude > node.getUpperLeftLongitude()) {

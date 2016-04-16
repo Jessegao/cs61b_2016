@@ -17,7 +17,7 @@ public class QuadTree {
         return root.toString();
     }
 
-    public ArrayList<QuadTreeNode> getRasterImages(Double top, Double left, Double bottom, Double right, Double width, Double height) {
+    public ArrayList<QuadTreeNode> getRasterImages(Double top, Double left, Double bottom, Double right, Double width) {
         ArrayList<QuadTreeNode> tileNodes = new ArrayList<>();
         Rectangle query = new Rectangle(left, right, top, bottom);
         double dpp = Math.abs(left - right) / width;
@@ -25,7 +25,7 @@ public class QuadTree {
         return tileNodes;
     }
 
-    /** Recursively gets all the tiles' names (no root/ or .png added yet) and puts them into tileNodes */
+    /** Recursively gets all the tiles' nodes (no root/ or .png added yet) and puts them into tileNodes */
     private void recursiveDestructiveCollect(ArrayList<QuadTreeNode> tileNodes, QuadTreeNode node, double dpp, Rectangle query) {
         if (isDeepEnough(node, dpp)) { // inefficient
             tileNodes.add(node);

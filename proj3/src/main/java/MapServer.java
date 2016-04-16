@@ -221,7 +221,7 @@ public class MapServer {
         HashMap<String, Object> rasteredImageParams = new HashMap<>();
 
         ArrayList<QuadTreeNode> tileNodes = quadTree.getRasterImages(params.get("ullat"), params.get("ullon"),
-                params.get("lrlat"), params.get("lrlon"), params.get("w"), params.get("h"));
+                params.get("lrlat"), params.get("lrlon"), params.get("w"));
 
         BufferedImage bigImage = stitchImages(tileNodes);
         try {
@@ -265,7 +265,7 @@ public class MapServer {
             }
             g.drawImage(bi, x, y, null);
             x += TILE_SIZE;
-            if(x > bufferedImage.getWidth()){
+            if(x >= bufferedImage.getWidth()){
                 x = 0;
                 y += bi.getHeight();
             }
