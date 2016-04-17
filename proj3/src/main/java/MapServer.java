@@ -69,6 +69,7 @@ public class MapServer {
         "end_lat", "end_lon"};
     /* Define any static variables here. Do not define any instance variables of MapServer. */
     private static GraphDB g;
+    private static LinkedList<Long> route;
 
     /**
      * Place any initialization statements that will be run before the server main loop here.
@@ -224,14 +225,17 @@ public class MapServer {
                 params.get("lrlat"), params.get("lrlon"), params.get("w"));
 
         BufferedImage bigImage = stitchImages(tileNodes);
+        QuadTreeNode first = tileNodes.get(0);
+        QuadTreeNode last = tileNodes.get(tileNodes.size()-1);
+        double dppLon = Math.abs(first.getUpperLeftLongitude() - last.getLowerRightLongitude()) / bigImage.getWidth();
+        double dppLat = Math.abs(first.getUpperLeftLatitude() - last.getLowerRightLatitude()) / bigImage.getHeight();
+        drawRoute(route, bigImage, dppLon, dppLat, first.getUpperLeftLongitude(), first.getUpperLeftLatitude());
         try {
             ImageIO.write(bigImage, "png", os);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        QuadTreeNode first = tileNodes.get(0);
-        QuadTreeNode last = tileNodes.get(tileNodes.size()-1);
         rasteredImageParams.put("raster_ul_lon", first.getUpperLeftLongitude());
         rasteredImageParams.put("raster_ul_lat", first.getUpperLeftLatitude());
         rasteredImageParams.put("raster_lr_lon", last.getLowerRightLongitude());
@@ -245,6 +249,29 @@ public class MapServer {
 
     private static String getProperFileName(QuadTreeNode node) {
         return IMG_ROOT + node.getPictureName() + ".png";
+    }
+
+    public static void drawRoute(LinkedList<Long> route, BufferedImage image, double dppLon, double dppLat, double queryTopLeftLongitude, double queryTopLeftLatitude) {
+        if (route == null) {
+            return;
+        }
+        Graphics2D graphics = (Graphics2D) image.getGraphics();
+        graphics.setStroke(new BasicStroke(MapServer.ROUTE_STROKE_WIDTH_PX,BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        graphics.setColor(ROUTE_STROKE_COLOR);
+        Node last = null;
+        for (long id : route) {
+            String nodeID = String.valueOf(id);
+            Node node = g.getNodeHashMap().get(nodeID);
+            if (last != null) {
+                int lon = (int) ((node.getLongitude() - queryTopLeftLongitude) / dppLon);
+                int lat = (int) -((node.getLatitude() - queryTopLeftLatitude) / dppLat);
+                int lastlon = (int) ((last.getLongitude() - queryTopLeftLongitude) / dppLon);
+                int lastlat = (int) -((last.getLatitude() - queryTopLeftLatitude) / dppLat);
+                System.out.println(lon + " " + lat);
+                graphics.drawLine(lastlon, lastlat, lon, lat);
+            }
+            last = node;
+        }
     }
 
     private static BufferedImage stitchImages(ArrayList<QuadTreeNode> tileNodes) {
@@ -306,8 +333,6 @@ public class MapServer {
         LinkedList<Long> path = new LinkedList<Long>();
         Node startNode = getClosestNode(params.get("start_lat"), params.get("start_lon"));
         Node endNode = getClosestNode(params.get("end_lat"), params.get("end_lon"));
-        System.out.println(startNode.getNodeID());
-        System.out.println(endNode.getNodeID());
 
         PriorityQueue<Node> minPQ = new PriorityQueue<Node>();
         startNode.setDistanceFromStart(0);
@@ -319,23 +344,27 @@ public class MapServer {
             path.add(0, Long.valueOf(nodeIter.getNodeID()));
             nodeIter = nodeIter.getPreviousNode();
         }
-
+        route = path;
         return path;
     }
 
     private static Node findPath(Node endNode, PriorityQueue<Node> minPQ) {
+        LinkedList<Node> nodes = new LinkedList<Node>();
         Node search = minPQ.remove();
         while (!search.getNodeID().equals(endNode.getNodeID())) {
             for (Node node : search.getAdjacentNodes()) {
                 node.setDistanceToEnd(node.distanceTo(endNode));
                 if (node.getDistanceFromStart() > search.getDistanceFromStart() + search.distanceTo(node)) {
+                    nodes.add(node);
                     node.setDistanceFromStart(search.getDistanceFromStart() + node.distanceTo(search));
                     node.setPreviousNode(search);
                     minPQ.add(node);
                 }
-
             }
             search = minPQ.remove();
+        }
+        for(Node node : nodes) {
+            node.setDistanceFromStart(Double.MAX_VALUE);
         }
         return search;
     }
@@ -362,6 +391,7 @@ public class MapServer {
      * Clear the current found route, if it exists.
      */
     public static void clearRoute() {
+        route = null;
     }
 
     /**
