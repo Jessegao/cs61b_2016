@@ -301,10 +301,61 @@ public class MapServer {
      *               end_lon -> end point longitude.
      * @return A LinkedList of node ids from the start of the route to the end.
      */
+
     public static LinkedList<Long> findAndSetRoute(Map<String, Double> params) {
-        LinkedList<Node> path = new LinkedList<Node>();
-        Node startNode = g.getNodeHashMap().g
-        return null;
+        LinkedList<Long> path = new LinkedList<Long>();
+        Node startNode = getClosestNode(params.get("start_lat"), params.get("start_lon"));
+        Node endNode = getClosestNode(params.get("end_lat"), params.get("end_lon"));
+        System.out.println(startNode.getNodeID());
+        System.out.println(endNode.getNodeID());
+
+        PriorityQueue<Node> minPQ = new PriorityQueue<Node>();
+        startNode.setDistanceFromStart(0);
+        startNode.setDistanceToEnd(startNode.distanceTo(endNode));
+        minPQ.add(startNode);
+        findPath(endNode, minPQ);
+        Node nodeIter = endNode;
+        while (nodeIter != null) {
+            path.add(0, Long.valueOf(nodeIter.getNodeID()));
+            nodeIter = nodeIter.getPreviousNode();
+        }
+
+        return path;
+    }
+
+    private static Node findPath(Node endNode, PriorityQueue<Node> minPQ) {
+        Node search = minPQ.remove();
+        while (!search.getNodeID().equals(endNode.getNodeID())) {
+            for (Node node : search.getAdjacentNodes()) {
+                node.setDistanceToEnd(node.distanceTo(endNode));
+                if (node.getDistanceFromStart() > search.getDistanceFromStart() + search.distanceTo(node)) {
+                    node.setDistanceFromStart(search.getDistanceFromStart() + node.distanceTo(search));
+                    node.setPreviousNode(search);
+                    minPQ.add(node);
+                }
+
+            }
+            search = minPQ.remove();
+        }
+        return search;
+    }
+
+    private static Node getClosestNode(double latitude, double longitude) {
+        // never gonna have an empty hashmap
+        double minDistance = Double.MAX_VALUE;
+        Node min = null;
+        for (Node node : g.getNodeHashMap().values()) {
+            double dist = getDistance(latitude, node.getLatitude(), longitude, node.getLongitude());
+            if (dist < minDistance) {
+                min = node;
+                minDistance = dist;
+            }
+        }
+        return min;
+    }
+
+    private static double getDistance(double lat1, double lat2, double lon1, double lon2) {
+        return Math.sqrt(((lat1 - lat2) * (lat1 - lat2)) + ((lon1 - lon2) * (lon1 - lon2)));
     }
 
     /**
