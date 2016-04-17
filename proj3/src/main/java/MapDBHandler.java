@@ -2,9 +2,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  Parses OSM XML files using an XML SAX parser. Used to construct the graph of roads for
@@ -30,9 +28,13 @@ public class MapDBHandler extends DefaultHandler {
                     "secondary_link", "tertiary_link"));
     private String activeState = "";
     private final GraphDB g;
+    private final HashMap<String, Node> nodeHashMap;
+    private ArrayList<Node> nodesToBeConnected;
+    private String highwayType;
 
     public MapDBHandler(GraphDB g) {
         this.g = g;
+        nodeHashMap = g.getNodeHashMap();
     }
 
     /**
@@ -52,20 +54,30 @@ public class MapDBHandler extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-        /* Some example code on how you might begin to parse XML files. */
         if (qName.equals("node")) {
             activeState = "node";
+            // initializes node in graphdb
+            nodeHashMap.put(attributes.getValue("id"), new Node(attributes));
         } else if (qName.equals("way")) {
             activeState = "way";
-//            System.out.println("Beginning a way...");
-        } else if (activeState.equals("way") && qName.equals("tag")) {
-            String k = attributes.getValue("k");
+            //System.out.println("Beginning a way...");
+            nodesToBeConnected = new ArrayList<Node>();
+            highwayType = null;
+        } else if (activeState.equals("way") && qName.equals("tag") && attributes.getValue("k").equals("highway")) {
+            //String k = attributes.getValue("k");
             String v = attributes.getValue("v");
-//            System.out.println("Tag with k=" + k + ", v=" + v + ".");
-        } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")
-                .equals("name")) {
-//            System.out.println("Node with name: " + attributes.getValue("v"));
+            //System.out.println("Tag with k=" + k + ", v=" + v + ".");
+            highwayType = v;
+        } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k").equals("name")) {
+            //System.out.println("Node with name: " + attributes.getValue("v"));
+        } else if (activeState.equals("way") && qName.equals("nd")) {
+            nodesToBeConnected.add(nodeHashMap.get(attributes.getValue("ref")));
         }
+    }
+
+    private void connect(Node node1, Node node2) {
+        node1.connect(node2);
+        node2.connect(node1);
     }
 
     /**
@@ -81,8 +93,10 @@ public class MapDBHandler extends DefaultHandler {
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (qName.equals("way")) {
-//            System.out.println("Finishing a way...");
+        if (qName.equals("way") && ALLOWED_HIGHWAY_TYPES.contains(highwayType)) {
+            for (int i = 0; i < nodesToBeConnected.size() - 1; i++) {
+                connect(nodesToBeConnected.get(i), nodesToBeConnected.get(i + 1));
+            }
         }
     }
 

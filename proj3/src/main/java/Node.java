@@ -1,26 +1,26 @@
-import java.util.HashMap;
+
+import java.util.HashSet;
+import org.xml.sax.Attributes;
 
 /**
  * Created by Jesse on 4/16/2016.
  */
 public class Node {
-    private HashMap<String, String> tags;
-    private int nodeID;
+    private String nodeID;
     private double latitude;
+    private HashSet<Node> adjacentNodes;
+
     private double longitude;
-
-    public Node(HashMap<String, String> tags, int nodeID, double latitude, double longitude) {
-        this.tags = tags;
-        this.nodeID = nodeID;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    private Attributes attributes;
+    public Node(Attributes attributes) {
+        this.attributes = attributes;
+        nodeID = attributes.getValue("id");
+        latitude = Double.parseDouble(attributes.getValue("lat"));
+        longitude = Double.parseDouble(attributes.getValue("lon"));
+        adjacentNodes = new HashSet<Node>();
     }
 
-    public HashMap<String, String> getTags() {
-        return tags;
-    }
-
-    public int getNodeID() {
+    public String getNodeID() {
         return nodeID;
     }
 
@@ -30,5 +30,22 @@ public class Node {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public Attributes getAttributes() {
+        return attributes;
+    }
+
+    public void connect(Node node) {
+        adjacentNodes.add(node);
+    }
+
+    public boolean hasNoAdjacentNodes() {
+        return adjacentNodes.isEmpty();
+    }
+
+    // not actual distance, only for comparing
+    public double distanceTo(Node node) {
+        return Math.abs(node.getLatitude() - latitude) + Math.abs(node.getLongitude() - longitude);
     }
 }

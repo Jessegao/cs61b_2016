@@ -2,6 +2,9 @@ import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -12,12 +15,21 @@ import javax.xml.parsers.SAXParserFactory;
  * @author Alan Yao
  */
 public class GraphDB {
+
+    // A list of nodes to be initialized in the handler
+    HashMap<String, Node> nodeHashMap;
+
+    public HashMap<String, Node> getNodeHashMap() {
+        return nodeHashMap;
+    }
+
     /**
      * Example constructor shows how to create and start an XML parser.
      * @param db_path Path to the XML file to be parsed.
      */
     public GraphDB(String db_path) {
         try {
+            nodeHashMap = new HashMap<String, Node>();
             File inputFile = new File(db_path);
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
@@ -44,5 +56,16 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
+        LinkedList<String> toBeRemoved = new LinkedList<>();
+        for (HashMap.Entry<String, Node> entry : nodeHashMap.entrySet()) {
+            if (entry.getValue().hasNoAdjacentNodes()) {
+                toBeRemoved.add(entry.getKey());
+            }
+        }
+        for (String s : toBeRemoved) {
+            nodeHashMap.remove(s);
+        }
     }
+
+
 }

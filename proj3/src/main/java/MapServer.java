@@ -295,10 +295,16 @@ public class MapServer {
      * to the endpoint. Distance is defined as the euclidean between two points (lon1, lat1) and
      * (lon2, lat2).
      * @param params from the API call described in REQUIRED_ROUTE_REQUEST_PARAMS
+     *               start_lat -> start point latitude,
+     *               start_lon -> start point longitude,
+     *               end_lat -> end point latitude,
+     *               end_lon -> end point longitude.
      * @return A LinkedList of node ids from the start of the route to the end.
      */
     public static LinkedList<Long> findAndSetRoute(Map<String, Double> params) {
-        return new LinkedList<>();
+        LinkedList<Node> path = new LinkedList<Node>();
+        Node startNode = g.getNodeHashMap().g
+        return null;
     }
 
     /**

@@ -32,21 +32,7 @@ public class Rectangle {
     }
 
     public boolean intersects(Rectangle rectangle) {
-        /** This basically counts how many times the other rectangle crosses into this rectangles's territory */
-        /**int numberOfLineContains = 0;
-        if (rectangle.getBottom() < top && rectangle.getBottom() > bottom) {
-            numberOfLineContains++;
-        }
-        if (rectangle.getTop() < top && rectangle.getTop() > bottom) {
-            numberOfLineContains++;
-        }
-        if (rectangle.getLeft() < left && rectangle.getLeft() > right) {
-            numberOfLineContains++;
-        }
-        if (rectangle.getRight() < left && rectangle.getRight() > right) {
-            numberOfLineContains++;
-        }
-        return numberOfLineContains > 1;*/
+        /** This basically translated from code I found online */
         return (rectangle.getLeft() < right && rectangle.getRight() > left && rectangle.getTop() > bottom && rectangle.getBottom() < top);
     }
 }
