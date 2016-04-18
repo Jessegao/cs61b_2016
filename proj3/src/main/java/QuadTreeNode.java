@@ -1,5 +1,3 @@
-import java.awt.image.BufferedImage;
-import java.io.File;
 
 /**
  * Created by Jesse on 4/13/2016.
@@ -37,7 +35,10 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
     private double lowerRightLatitude;
     private double lowerRightLongitude;
 
-    public QuadTreeNode(int depth, double upperLeftLatitude, double upperLeftLongitude, double lowerRightLatitude, double lowerRightLongitude, int fileName) {
+    public QuadTreeNode(int depth, double upperLeftLatitude,
+                        double upperLeftLongitude,
+                        double lowerRightLatitude, double lowerRightLongitude,
+                        int fileName) {
         this.depth = depth;
         this.upperLeftLatitude = upperLeftLatitude;
         this.upperLeftLongitude = upperLeftLongitude;
@@ -49,17 +50,25 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
         if (depth < DEEPEST_DEPTH) {
             double halfLat = (upperLeftLatitude + lowerRightLatitude) / 2;
             double halfLong = (upperLeftLongitude + lowerRightLongitude) / 2;
-            upperLeft = new QuadTreeNode(depth + 1, upperLeftLatitude, upperLeftLongitude, halfLat, halfLong, tile * 10 + 1);
-            upperRight = new QuadTreeNode(depth + 1, upperLeftLatitude, halfLong, halfLat, lowerRightLongitude, tile * 10 + 2);
-            lowerLeft = new QuadTreeNode(depth + 1, halfLat, upperLeftLongitude, lowerRightLatitude, halfLong, tile * 10 + 3);
-            lowerRight = new QuadTreeNode(depth + 1, halfLat, halfLong, lowerRightLatitude, lowerRightLongitude, tile * 10 + 4);
+            upperLeft = new QuadTreeNode(depth + 1, upperLeftLatitude,
+                    upperLeftLongitude, halfLat, halfLong, tile * 10 + 1);
+            upperRight = new QuadTreeNode(depth + 1, upperLeftLatitude,
+                    halfLong, halfLat, lowerRightLongitude, tile * 10 + 2);
+            lowerLeft = new QuadTreeNode(depth + 1, halfLat,
+                    upperLeftLongitude, lowerRightLatitude, halfLong, tile * 10 + 3);
+            lowerRight = new QuadTreeNode(depth + 1, halfLat,
+                    halfLong, lowerRightLatitude, lowerRightLongitude, tile * 10 + 4);
         }
     }
 
     public String toString() {
-        String children = "The children are:\n" + upperLeft + upperRight + lowerLeft + lowerRight + "\n";
-        return ("depth = " + depth + "\n" + "upperleftLatitude = " + upperLeftLatitude + "\n" + "upperLeftLongitude = " + upperLeftLongitude
-                + "\n" + "lowerRightLatitude = " + lowerRightLatitude + "\n" + "lowerRightLongitude = " + lowerRightLongitude  + "\n" + "tile = " + tile + "\n \n"
+        String children = "The children are:\n" + upperLeft
+                + upperRight + lowerLeft + lowerRight + "\n";
+        return ("depth = " + depth + "\n" + "upperleftLatitude = "
+                + upperLeftLatitude + "\n" + "upperLeftLongitude = " + upperLeftLongitude
+                + "\n" + "lowerRightLatitude = " + lowerRightLatitude
+                + "\n" + "lowerRightLongitude = " + lowerRightLongitude
+                + "\n" + "tile = " + tile + "\n \n"
                 + children);
     }
 
@@ -75,7 +84,8 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
     }
 
     public Rectangle getRectangle() {
-        return new Rectangle(upperLeftLongitude, lowerRightLongitude, upperLeftLatitude, lowerRightLatitude);
+        return new Rectangle(upperLeftLongitude,
+                lowerRightLongitude, upperLeftLatitude, lowerRightLatitude);
     }
 
     public QuadTreeNode getUpperRight() {
@@ -94,7 +104,9 @@ public class QuadTreeNode implements Comparable<QuadTreeNode> {
         return lowerLeft;
     }
 
-    public int getDepth() { return depth; }
+    public int getDepth() {
+        return depth;
+    }
 
     public int compareTo(QuadTreeNode node) {
         if (upperLeftLatitude < node.getUpperLeftLatitude()) {

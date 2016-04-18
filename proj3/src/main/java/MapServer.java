@@ -1,11 +1,25 @@
-import java.awt.*;
+
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+
+
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 /* Maven is used to pull in these dependencies. */
 import com.google.gson.Gson;
@@ -18,6 +32,7 @@ import static spark.Spark.*;
  * This MapServer class is the entry point for running the JavaSpark web server for the BearMaps
  * application project, receiving API calls, handling the API call processing, and generating
  * requested images and routes.
+ *
  * @author Alan Yao
  */
 public class MapServer {
@@ -34,15 +49,25 @@ public class MapServer {
      */
     public static final double ROOT_ULLAT = 37.892195547244356, ROOT_ULLON = -122.2998046875,
             ROOT_LRLAT = 37.82280243352756, ROOT_LRLON = -122.2119140625;
-    /** Each tile is 256x256 pixels. */
+    /**
+     * Each tile is 256x256 pixels.
+     */
     public static final int TILE_SIZE = 256;
-    /** HTTP failed response. */
+    /**
+     * HTTP failed response.
+     */
     private static final int HALT_RESPONSE = 403;
-    /** Route stroke information: typically roads are not more than 5px wide. */
+    /**
+     * Route stroke information: typically roads are not more than 5px wide.
+     */
     public static final float ROUTE_STROKE_WIDTH_PX = 5.0f;
-    /** Route stroke information: Cyan with half transparency. */
+    /**
+     * Route stroke information: Cyan with half transparency.
+     */
     public static final Color ROUTE_STROKE_COLOR = new Color(108, 181, 230, 200);
-    /** The tile images are in the IMG_ROOT folder. */
+    /**
+     * The tile images are in the IMG_ROOT folder.
+     */
     private static final String IMG_ROOT = "img/";
     /**
      * The OSM XML file path. Downloaded from <a href="http://download.bbbike.org/osm/">here</a>
@@ -57,8 +82,8 @@ public class MapServer {
      * lrlat -> lower right corner latitude,<br> lrlon -> lower right corner longitude <br>
      * w -> user viewport window width in pixels,<br> h -> user viewport height in pixels.
      **/
-    private static final String[] REQUIRED_RASTER_REQUEST_PARAMS = {"ullat", "ullon", "lrlat",
-        "lrlon", "w", "h"};
+    private static final String[] REQUIRED_RASTER_REQUEST_PARAMS = {"ullat",
+        "ullon", "lrlat", "lrlon", "w", "h"};
     /**
      * Each route request to the server will have the following parameters
      * as keys in the params map.<br>
@@ -116,8 +141,8 @@ public class MapServer {
         get("/route", (req, res) -> {
             HashMap<String, Double> params =
                     getRequestParams(req, REQUIRED_ROUTE_REQUEST_PARAMS);
-            LinkedList<Long> route = findAndSetRoute(params);
-            return !route.isEmpty();
+            LinkedList<Long> route1 = findAndSetRoute(params);
+            return !route1.isEmpty();
         });
 
         /* Define the API endpoint for clearing the current route. */
@@ -152,7 +177,8 @@ public class MapServer {
     /**
      * Validate & return a parameter map of the required request parameters.
      * Requires that all input parameters are doubles.
-     * @param req HTTP Request
+     *
+     * @param req            HTTP Request
      * @param requiredParams TestParams to validate
      * @return A populated map of input parameter to it's numerical value.
      */
@@ -221,15 +247,19 @@ public class MapServer {
     public static Map<String, Object> getMapRaster(Map<String, Double> params, OutputStream os) {
         HashMap<String, Object> rasteredImageParams = new HashMap<>();
 
-        ArrayList<QuadTreeNode> tileNodes = quadTree.getRasterImages(params.get("ullat"), params.get("ullon"),
+        ArrayList<QuadTreeNode> tileNodes =
+                quadTree.getRasterImages(params.get("ullat"), params.get("ullon"),
                 params.get("lrlat"), params.get("lrlon"), params.get("w"));
 
         BufferedImage bigImage = stitchImages(tileNodes);
         QuadTreeNode first = tileNodes.get(0);
-        QuadTreeNode last = tileNodes.get(tileNodes.size()-1);
-        double dppLon = Math.abs(first.getUpperLeftLongitude() - last.getLowerRightLongitude()) / bigImage.getWidth();
-        double dppLat = Math.abs(first.getUpperLeftLatitude() - last.getLowerRightLatitude()) / bigImage.getHeight();
-        drawRoute(route, bigImage, dppLon, dppLat, first.getUpperLeftLongitude(), first.getUpperLeftLatitude());
+        QuadTreeNode last = tileNodes.get(tileNodes.size() - 1);
+        double dppLon = Math.abs(first.getUpperLeftLongitude()
+                - last.getLowerRightLongitude()) / bigImage.getWidth();
+        double dppLat = Math.abs(first.getUpperLeftLatitude()
+                - last.getLowerRightLatitude()) / bigImage.getHeight();
+        drawRoute(route, bigImage, dppLon, dppLat,
+                first.getUpperLeftLongitude(), first.getUpperLeftLatitude());
         try {
             ImageIO.write(bigImage, "png", os);
         } catch (IOException e) {
@@ -251,15 +281,19 @@ public class MapServer {
         return IMG_ROOT + node.getPictureName() + ".png";
     }
 
-    public static void drawRoute(LinkedList<Long> route, BufferedImage image, double dppLon, double dppLat, double queryTopLeftLongitude, double queryTopLeftLatitude) {
-        if (route == null) {
+    public static void drawRoute(LinkedList<Long> route1, BufferedImage image,
+                                 double dppLon, double dppLat,
+                                 double queryTopLeftLongitude,
+                                 double queryTopLeftLatitude) {
+        if (route1 == null) {
             return;
         }
         Graphics2D graphics = (Graphics2D) image.getGraphics();
-        graphics.setStroke(new BasicStroke(MapServer.ROUTE_STROKE_WIDTH_PX,BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        graphics.setStroke(new BasicStroke(MapServer.ROUTE_STROKE_WIDTH_PX,
+                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         graphics.setColor(ROUTE_STROKE_COLOR);
         Node last = null;
-        for (long id : route) {
+        for (long id : route1) {
             String nodeID = String.valueOf(id);
             Node node = g.getNodeHashMap().get(nodeID);
             if (last != null) {
@@ -267,7 +301,6 @@ public class MapServer {
                 int lat = (int) -((node.getLatitude() - queryTopLeftLatitude) / dppLat);
                 int lastlon = (int) ((last.getLongitude() - queryTopLeftLongitude) / dppLon);
                 int lastlat = (int) -((last.getLatitude() - queryTopLeftLatitude) / dppLat);
-                System.out.println(lon + " " + lat);
                 graphics.drawLine(lastlon, lastlat, lon, lat);
             }
             last = node;
@@ -278,21 +311,22 @@ public class MapServer {
         Collections.sort(tileNodes);
         int row = numberOfTilesPerRow(tileNodes);
         int col = tileNodes.size() / row;
-        BufferedImage bufferedImage = new BufferedImage(row * TILE_SIZE, col * TILE_SIZE, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(row * TILE_SIZE,
+                col * TILE_SIZE, BufferedImage.TYPE_INT_RGB);
 
-        Graphics g = bufferedImage.getGraphics();
+        Graphics graphics = bufferedImage.getGraphics();
         int x = 0;
         int y = 0;
-        for(QuadTreeNode node : tileNodes){
+        for (QuadTreeNode node : tileNodes) {
             BufferedImage bi;
             try {
                 bi = ImageIO.read(new File(getProperFileName(node)));
             } catch (java.io.IOException exception) {
                 throw new RuntimeException("Aye you messed up. A file doesn't exist.");
             }
-            g.drawImage(bi, x, y, null);
+            graphics.drawImage(bi, x, y, null);
             x += TILE_SIZE;
-            if(x >= bufferedImage.getWidth()){
+            if (x >= bufferedImage.getWidth()) {
                 x = 0;
                 y += bi.getHeight();
             }
@@ -321,6 +355,7 @@ public class MapServer {
      * The route should start from the closest node to the start point and end at the closest node
      * to the endpoint. Distance is defined as the euclidean between two points (lon1, lat1) and
      * (lon2, lat2).
+     *
      * @param params from the API call described in REQUIRED_ROUTE_REQUEST_PARAMS
      *               start_lat -> start point latitude,
      *               start_lon -> start point longitude,
@@ -354,16 +389,18 @@ public class MapServer {
         while (!search.getNodeID().equals(endNode.getNodeID())) {
             for (Node node : search.getAdjacentNodes()) {
                 node.setDistanceToEnd(node.distanceTo(endNode));
-                if (node.getDistanceFromStart() > search.getDistanceFromStart() + search.distanceTo(node)) {
+                if (node.getDistanceFromStart() > search.getDistanceFromStart()
+                        + search.distanceTo(node)) {
                     nodes.add(node);
-                    node.setDistanceFromStart(search.getDistanceFromStart() + node.distanceTo(search));
+                    node.setDistanceFromStart(search.getDistanceFromStart()
+                            + node.distanceTo(search));
                     node.setPreviousNode(search);
                     minPQ.add(node);
                 }
             }
             search = minPQ.remove();
         }
-        for(Node node : nodes) {
+        for (Node node : nodes) {
             node.setDistanceFromStart(Double.MAX_VALUE);
         }
         return search;
@@ -374,7 +411,8 @@ public class MapServer {
         double minDistance = Double.MAX_VALUE;
         Node min = null;
         for (Node node : g.getNodeHashMap().values()) {
-            double dist = getDistance(latitude, node.getLatitude(), longitude, node.getLongitude());
+            double dist = getDistance(latitude, node.getLatitude(),
+                    longitude, node.getLongitude());
             if (dist < minDistance) {
                 min = node;
                 minDistance = dist;
@@ -396,6 +434,7 @@ public class MapServer {
 
     /**
      * In linear time, collect all the names of OSM locations that prefix-match the query string.
+     *
      * @param prefix Prefix string to be searched for. Could be any case, with our without
      *               punctuation.
      * @return A <code>List</code> of the full names of locations whose cleaned name matches the
@@ -408,6 +447,7 @@ public class MapServer {
     /**
      * Collect all locations that match a cleaned <code>locationName</code>, and return
      * information about each node that matches.
+     *
      * @param locationName A full name of a location searched for.
      * @return A list of locations whose cleaned name matches the
      * cleaned <code>locationName</code>, and each location is a map of parameters for the Json

@@ -1,5 +1,6 @@
 
 import java.util.HashSet;
+
 import org.xml.sax.Attributes;
 
 /**
@@ -41,6 +42,7 @@ public class Node implements Comparable<Node> {
 
     private double longitude;
     private Attributes attributes;
+
     public Node(Attributes attributes) {
         this.attributes = attributes;
         nodeID = attributes.getValue("id");
@@ -84,8 +86,9 @@ public class Node implements Comparable<Node> {
     }
 
     public int compareTo(Node node) {
-        double difference = distanceFromStart + distanceToEnd - (node.distanceFromStart + node.distanceToEnd);
-        if(difference < 0) {
+        double difference = distanceFromStart + distanceToEnd
+                - (node.distanceFromStart + node.distanceToEnd);
+        if (difference < 0) {
             return -1;
         } else if (difference > 0) {
             return 1;

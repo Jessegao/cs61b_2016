@@ -33,6 +33,7 @@ public class Rectangle {
 
     public boolean intersects(Rectangle rectangle) {
         /** This basically translated from code I found online */
-        return (rectangle.getLeft() < right && rectangle.getRight() > left && rectangle.getTop() > bottom && rectangle.getBottom() < top);
+        return (rectangle.getLeft() < right && rectangle.getRight() > left
+                && rectangle.getTop() > bottom && rectangle.getBottom() < top);
     }
 }
