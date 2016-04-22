@@ -26,7 +26,7 @@ public class GraphDB {
     /**
      * Example constructor shows how to create and start an XML parser.
      *
-     * @param db_path Path to the XML file to be parsed.
+     * @param dbpath Path to the XML file to be parsed.
      */
     public GraphDB(String dbpath) {
         try {
