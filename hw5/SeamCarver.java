@@ -10,7 +10,7 @@ public class SeamCarver {
     private Picture transposed;
 
     public SeamCarver(Picture picture) {
-        this.picture = picture;
+        this.picture = new Picture(picture);
         transposed = getTransposedMatrix(picture);
     }
 
@@ -138,7 +138,7 @@ public class SeamCarver {
         }
     }
 
-    private int[] findVerticalSeam() {
+    public int[] findVerticalSeam() {
         Node[][] energyMatrix = findEnergyMatrixVertical();
         ArrayList<Node> path = new ArrayList<>();
         Node minLastNode = energyMatrix[width() - 1][height() - 1];
@@ -159,7 +159,7 @@ public class SeamCarver {
         return p;
     }
 
-    public Node[][] findEnergyMatrixVertical() {
+    private Node[][] findEnergyMatrixVertical() {
         Node[][] energyMatrix = new Node[width()][height()];
         for (int y = 0; y < height(); y++) {
             for (int x = 0; x < width(); x++) {
