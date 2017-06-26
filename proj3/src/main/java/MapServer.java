@@ -36,6 +36,7 @@ import static spark.Spark.*;
  * @author Alan Yao
  */
 public class MapServer {
+    /**
 
     /**
      * This is the QuadTree that handles stuff
@@ -61,7 +62,6 @@ public class MapServer {
      * Route stroke information: typically roads are not more than 5px wide.
      */
     public static final float ROUTE_STROKE_WIDTH_PX = 5.0f;
-    /**
      * Route stroke information: Cyan with half transparency.
      */
     public static final Color ROUTE_STROKE_COLOR = new Color(108, 181, 230, 200);
